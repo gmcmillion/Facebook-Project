@@ -1,7 +1,7 @@
 <html>
     <head>
         <title>Log In or Sign Up</title>
-        <link rel = "stylesheet" type="text/css" href="login.css">
+        <link rel="stylesheet" type="text/css" href="login.css">
     </head>
     <body>
         <div id="login-nav-bar">
@@ -15,7 +15,7 @@
                 <tr id="input-boxes">
                     <td><input type="text"></input></td>
                     <td><input type="text"></input></td>
-                    <td><input type="submit" value="Log In"></input></td>
+                    <td><input type="submit" value="Log In" id="login-btn"></input></td>
                 </tr>
                 <tr>
                     <td></td>
@@ -25,7 +25,7 @@
             </table>
         </div>
         <div id="registration-div">
-            <h1>Sign Up</h1>
+            <h1 id="sign-up">Sign Up</h1>
             <form>
                 <div id="name">
                     <input type="text" id="first-name" placeholder="First Name"></input>
@@ -34,9 +34,10 @@
                 <div id="email-password">
                     <input type="email" id="email" placeholder="Email"></input>
                     </br>
-                    <input type="password" id="password" placeholder="Password"></input>
+                    <input type="password" id="password" placeholder="New Password"></input>
                 </div>
                 <div id="birthday">
+                    <p>Birthday<p>
                     <select id="month">
                         <option value="month">Month</option>
                         <option value="jan">Jan</option>
@@ -154,7 +155,12 @@
                     <input type="radio" name="gender"></input>
                     <label>Male</label>
                 </div>
+                <div id="create-account-btn">
+                    <input type="submit" value="Create Account"></input>
+                </div>  
             </form>
         </div>
+
+
     </body>
 </html>
