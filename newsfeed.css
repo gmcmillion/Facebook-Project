@@ -6,10 +6,8 @@ body {
     height: 45px;
     width: 100%;
     background-color:#3B5998;
-    /*
-    overflow: hidden;
     position: fixed;
-    */
+    z-index: 1;
 }
 
 #fb-logo {
@@ -53,6 +51,7 @@ body {
 }
 
 #newsfeed {
+    margin-top:45px;
     display: inline-block;
     width: 100%;
     height: 100%;
@@ -132,7 +131,7 @@ body {
 }
 
 .post {
-    width: 590px;
+    width: 592px;
     height: auto;
     background-color: #ffffff;
     margin-bottom: 10px;
@@ -149,6 +148,14 @@ body {
     color:#3B5998;
     font-size:16px;
     margin-left: 4px;
+}
+
+.down-arrow {
+    float: right;
+    margin: 5px 0;
+    cursor: pointer;
+    border-style:none;
+    background-color: #ffffff;
 }
 
 .post-content {
