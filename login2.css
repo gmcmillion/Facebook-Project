@@ -1,0 +1,9 @@
+.borderless td {
+    border-top: none;
+    padding: 0;
+    margin-right:5px;
+}
+
+.table {
+    margin-bottom: 0;
+}
