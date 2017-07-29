@@ -29,13 +29,15 @@
                 </div>
                 <div id="post-body">
                     <img src="images/post-prof-pic.png">
-                    <input type="text" id="post-input-box" placeholder="What's on your mind, Gregg?"></input>
+                    <form id="post-form">
+                        <input type="text" id="post-input-box" placeholder="What's on your mind, Gregg?" autocomplete="off"></input>
+                        <input type="submit" value="Post" id="post-submit-btn"></input>
+                    </form>        
                 </div>
-                <div id="post-footer">
-                    <input type="submit" value="Post"></input>
-                </div>
+
             </div>
             <div id="all-posts">
+                <!--
                 <div class="post">
                     <img src="images/post-prof-pic.png">
                     <span>Gregg McMillion</span>
@@ -51,6 +53,12 @@
                             <p>Comment</p>
                         </button>
                     </div>
+                    
+                    <div class="all-comments">
+                        <img src="images/post-prof-pic.png">
+                        <p class="comment">Hi Gregg, how are you?</p>
+                    </div>
+                    
                 </div>
                 <div class="post">
                     <img src="images/post-prof-pic.png">
@@ -95,6 +103,24 @@
                     </div>
                 </div>
             </div>
+            -->
         </div>
+
+        <!-- Dropdown menu for posts -->
+        <div id="post-dropdown">   
+            <button id="edit-post">Edit Post</button>
+            <button id="delete-post">Delete Post</button>
+        </div>
+
+        <!-- Dropdown box for commenting -->
+        <div id="comment-box">
+            <form id="comment-form">
+                <input id="new-comment" type="text" placeholder="Write a comment..."></input>
+                <input type="submit"></input>
+            </form>
+        </div>
+
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+        <script src="newsfeed.js"></script>
     </body>
 </html>
