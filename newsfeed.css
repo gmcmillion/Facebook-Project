@@ -145,15 +145,12 @@ button {
 
 .post img {
     vertical-align:middle;
-}
-
-.post span {
-    color:#3B5998;
-    font-size:16px;
-    margin-left: 4px;
+    float:left;
 }
 
 .down-arrow {
+    position: relative;
+    top: -30px;
     float: right;
     margin: 5px 0;
     cursor: pointer;
@@ -331,4 +328,63 @@ button {
     color: #000000;
     text-decoration: none;
     cursor: pointer;
+}
+
+.comment {
+    margin: 4px 0;
+}
+
+.comment:first-child {
+    border-top: 1px solid #dddfe2;
+}  
+
+.comment p {
+    margin-left: 6px;
+}
+
+.comment-input-div {
+    display: none;
+    padding: 5px;
+}
+
+.comment-input-form {
+    margin: 0;
+}
+
+.comment-input-form input[type=text] {
+    width: 500px;
+    height: 40px;
+    font-size: 16px;
+    padding: 10px;
+    border-radius: 4px;
+    border: 1px solid #4D4D4D;
+}
+
+.comment-input-form input[type=submit] {
+    height: 22px;
+    width: 60px;
+    margin-top: 8px;
+    font-size: 14px !important;
+    background-color: #4169ac;
+    color: #ffffff;
+    border-radius: 4px;
+    border-style: none;
+    cursor: pointer;
+}
+
+.div-name-time {
+    display: inline;
+}
+
+.div-name-time span {
+    color:#3B5998;
+    font-size:16px;
+    margin-left: 4px;
+}
+
+.timeago {
+    display: block;
+    color: #90949b;
+    font-size: 12px;
+    margin-left: 44px;
 }

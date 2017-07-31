@@ -4,6 +4,7 @@ var posts = [
     author: 'Gregg Mcmillion',
     profilePic: '',
     postContent: 'Hello World!!',
+    timeStamp: '2006-07-17T09:24:17Z',
     liked: false,
     comments: [
         { author: "Gregg Mcmillion", newComment: "This is my 1st comment"},
@@ -13,6 +14,7 @@ var posts = [
     author: 'Marlyn Cuenca',
     profilePic: '',
     postContent: 'Goodbye World!!',
+    timeStamp: '2007-07-17T09:24:17Z',
     liked: true,
     comments: [
         { author: "Gregg Mcmillion", newComment: "This is my 3rd comment"},
@@ -22,6 +24,7 @@ var posts = [
     author: 'Molly',
     profilePic: '',
     postContent: 'Another Post',
+    timeStamp: '2017-07-17T09:24:17Z',
     liked: true,
     comments: [
     ]}
@@ -29,13 +32,16 @@ var posts = [
 
 var row;
 $(document).ready(function() {
-    console.log(posts);
     //Populate feed with dummy posts
     for(var i = 0; i < posts.length; i++)
     {
+        var timeago = jQuery.timeago(posts[i].timeStamp);
         var divpost = $('<div/>').attr('class', 'post');
         var imgprof = $('<img/>').attr('src', 'images/post-prof-pic.png');      //Alter for correct prof-pics
+        var divNameTime = $('<div/>').attr('class', 'div-name-time');
         var span = $('<span/>').text(posts[i].author);
+        var time = $('<time/>').attr('class', 'timeago').text(timeago);
+        divNameTime.append(span).append(time);
         var btn1 = $('<button/>').attr('class', 'down-arrow');
         var imgarrow = $('<img/>').attr('src', 'images/down-arrow.png');
         btn1.append(imgarrow);
@@ -55,7 +61,7 @@ $(document).ready(function() {
         var p3 = $('<p/>').text('Comment'); 
         btn3.append(imgcomment).append(p3);
         divlike.append(btn2).append(btn3);
-        divpost.append(imgprof).append(span).append(btn1).append(p1).append(divlike);
+        divpost.append(imgprof).append(divNameTime).append(btn1).append(p1).append(divlike);
         $('#all-posts').prepend(divpost);
     }
 
@@ -69,9 +75,16 @@ $(document).ready(function() {
 
     //Build a new post
     function buildPost(post) {
+        var time = new Date();
+        var isoTime = time.toISOString();
+
         var divpost = $('<div/>').attr('class', 'post');
         var imgprof = $('<img/>').attr('src', 'images/post-prof-pic.png');
         var span = $('<span/>').text('Gregg Mcmillion');
+        var timeago = jQuery.timeago(new Date());
+        var time = $('<time/>').attr('class', 'timeago').text(timeago);
+        var divNameTime = $('<div/>').attr('class', 'div-name-time');
+        divNameTime.append(span).append(time);
         var btn1 = $('<button/>').attr('class', 'down-arrow');
         var imgarrow = $('<img/>').attr('src', 'images/down-arrow.png');
         btn1.append(imgarrow);
@@ -86,7 +99,7 @@ $(document).ready(function() {
         var p3 = $('<p/>').text('Comment'); 
         btn3.append(imgcomment).append(p3);
         divlike.append(btn2).append(btn3);
-        divpost.append(imgprof).append(span).append(btn1).append(p1).append(divlike);
+        divpost.append(imgprof).append(divNameTime).append(btn1).append(p1).append(divlike);
         $('#all-posts').prepend(divpost);
 
         //Create object to add to local array
@@ -94,10 +107,11 @@ $(document).ready(function() {
             author: 'Gregg Mcmillion', 
             profilePic: '', 
             postContent: post, 
-            liked: 'false', 
+            timeStamp: isoTime,
+            liked: false, 
             comments: []
         };
-        
+
         //Add to local data structure
         posts[posts.length] = postObj;
     }
@@ -105,7 +119,6 @@ $(document).ready(function() {
     //Dropdown menu for down arrow
     $('#all-posts').on('click', '.down-arrow', function() {
         row = $(this).parent().index();
-        console.log('row: '+row);
 
         $("#post-dropdown").css({
         'position': 'absolute',
@@ -124,7 +137,6 @@ $(document).ready(function() {
         $('#modal-post-content input[type=text]').attr('value', posts[calc].postContent);
 
         $('#myModal').toggle();         //display modal
-        console.log(posts);
     });
 
     //Adjust currrent post with new edits
@@ -137,9 +149,6 @@ $(document).ready(function() {
 
         //Store edit in local database
         posts[calc].postContent = edits;
-
-        //Clear modal form
-        //$('#modal-post-content input[type=text]').val('');
 
         //Close modal
         $('#myModal').toggle(); 
@@ -187,20 +196,30 @@ $(document).ready(function() {
         }
     }); 
 
-    //Comment on a post
+    //Toggle comment input box to comment on a post
     $('#all-posts').on('click', '.comment-btn', function() { 
-        row = $(this).parent().parent().index();        
+        row = $(this).parent().parent().index();    
         
-        $('#comment-box').toggle();     //Toggle input box
+        //Toggle input box
+        $('.comment-input-div').toggle();
     });
 
     //Get new comment on submit
-    $('#comment-form').submit(function(e) {
+    $('.comment-input-form').submit(function(e) {
         e.preventDefault();
-        var comment = $('#new-comment').val();
-        console.log(comment+' on row '+row);
+        $('.comment-input-div').toggle();
+        var comment = $('.new-comment').val();
+        this.reset();
+        //console.log(comment+' on row '+row);
 
         //Post comment under post
+        var div = $('<div/>').attr('class', 'comment');
+        var img = $('<img/>').attr('src', 'images/post-prof-pic.png');
+        var p = $('<p/>').attr('class', 'comment').text(comment);
+        div.append(img).append(p);
+        // NEED TO CHANGE TO APPEND TO APPROPRIATE CHILD
+        $('.all-comments').append(div);
 
+        //Add comment to data structure
     });
 });
