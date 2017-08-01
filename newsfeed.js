@@ -62,6 +62,26 @@ $(document).ready(function() {
         btn3.append(imgcomment).append(p3);
         divlike.append(btn2).append(btn3);
         divpost.append(imgprof).append(divNameTime).append(btn1).append(p1).append(divlike);
+        divAllComments = $('<div/>').attr('class', 'all-comments');
+        divAllComments2 = $('<div/>').attr('class', 'comment-input-div');
+        commentForm = $('<form/>').attr('class', 'comment-input-form');
+        input1 = $('<input/>').attr('class', 'new-comment').attr('type', 'text').attr('placeholder', 'Write a comment...');
+        input2 = $('<input/>').attr('type', 'submit');
+        commentForm.append(input1).append(input2);
+        divAllComments2.append(commentForm);
+        divAllComments.append(divAllComments2);
+        
+        //Append Comments
+        for(var j = 0; j < posts[i].comments.length; j++)
+        {
+            var div = $('<div/>').attr('class', 'comment-div');
+            var img = $('<img/>').attr('src', 'images/post-prof-pic.png');
+            var span = $('<span/>').attr('class', 'author').text(posts[i].comments[j].author);
+            var p = $('<p/>').attr('class', 'comment').text(posts[i].comments[j].newComment);
+            div.append(img).append(span).append(p);
+            divAllComments.append(div);
+        }
+        divpost.append(divAllComments);
         $('#all-posts').prepend(divpost);
     }
 
@@ -77,7 +97,6 @@ $(document).ready(function() {
     function buildPost(post) {
         var time = new Date();
         var isoTime = time.toISOString();
-
         var divpost = $('<div/>').attr('class', 'post');
         var imgprof = $('<img/>').attr('src', 'images/post-prof-pic.png');
         var span = $('<span/>').text('Gregg Mcmillion');
@@ -100,6 +119,15 @@ $(document).ready(function() {
         btn3.append(imgcomment).append(p3);
         divlike.append(btn2).append(btn3);
         divpost.append(imgprof).append(divNameTime).append(btn1).append(p1).append(divlike);
+        divAllComments = $('<div/>').attr('class', 'all-comments');
+        divAllComments2 = $('<div/>').attr('class', 'comment-input-div');
+        commentForm = $('<form/>').attr('class', 'comment-input-form');
+        input1 = $('<input/>').attr('class', 'new-comment').attr('type', 'text').attr('placeholder', 'Write a comment...');
+        input2 = $('<input/>').attr('type', 'submit');
+        commentForm.append(input1).append(input2);
+        divAllComments2.append(commentForm);
+        divAllComments.append(divAllComments2);
+        divpost.append(divAllComments);
         $('#all-posts').prepend(divpost);
 
         //Create object to add to local array
@@ -111,7 +139,6 @@ $(document).ready(function() {
             liked: false, 
             comments: []
         };
-
         //Add to local data structure
         posts[posts.length] = postObj;
     }
@@ -134,13 +161,14 @@ $(document).ready(function() {
 
         //Populate modal
         $('#modal-author').html(posts[calc].author);
-        $('#modal-post-content input[type=text]').attr('value', posts[calc].postContent);
+        $('#modal-post-content input[type=text]').val(posts[calc].postContent);
 
         $('#myModal').toggle();         //display modal
     });
 
     //Adjust currrent post with new edits
-    $('#modal-post-content').submit(function() {
+    $('#modal-post-content').submit(function(e) {
+        e.preventDefault();
         var edits = $('#modal-post-content input[type=text]').val();
         var calc = posts.length - row - 1;
 
@@ -170,13 +198,13 @@ $(document).ready(function() {
     //Delete post
     $("#delete-post").click(function() {
         $("#post-dropdown").toggle();
-        var calc = posts.length - row - 1;
-
+        
         //Delete from local data structure
+        var calc = posts.length - row - 1;
         posts.splice(calc, 1);
 
         //Delete post from html       
-        $('#all-posts div:nth-child('+(row+1)+')').remove();
+        $('#all-posts .post:nth-child('+(row+1)+')').remove();
     });
 
     //Like or Unlike a post
@@ -199,27 +227,32 @@ $(document).ready(function() {
     //Toggle comment input box to comment on a post
     $('#all-posts').on('click', '.comment-btn', function() { 
         row = $(this).parent().parent().index();    
-        
-        //Toggle input box
-        $('.comment-input-div').toggle();
+                
+        //Toggle appropriate input box
+        $('#all-posts div:nth-child('+(row+1)+')').find('.comment-input-div').toggle();
     });
 
     //Get new comment on submit
     $('.comment-input-form').submit(function(e) {
         e.preventDefault();
-        $('.comment-input-div').toggle();
-        var comment = $('.new-comment').val();
+        $(this).parent().toggle();  //Close input box
+        var comment = $(this).find('.new-comment').val();
         this.reset();
-        //console.log(comment+' on row '+row);
 
         //Post comment under post
-        var div = $('<div/>').attr('class', 'comment');
+        var div = $('<div/>').attr('class', 'comment-div');
         var img = $('<img/>').attr('src', 'images/post-prof-pic.png');
+        var span = $('<span/>').attr('class', 'author').text('Gregg Mcmillion');
         var p = $('<p/>').attr('class', 'comment').text(comment);
-        div.append(img).append(p);
-        // NEED TO CHANGE TO APPEND TO APPROPRIATE CHILD
-        $('.all-comments').append(div);
+        div.append(img).append(span).append(p);
+        $(this).parent().parent().append(div);
 
         //Add comment to data structure
+        var newComment = {
+            author: 'Gregg Mcmillion', 
+            newComment: comment
+        };
+        var calc = posts.length - row - 1;
+        posts[calc].comments.push(newComment);
     });
 });
