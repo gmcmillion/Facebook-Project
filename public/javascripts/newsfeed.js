@@ -1,88 +1,114 @@
 //Dummy posts (oldest -> newest)
-var posts = [
-    {
-    author: 'Gregg Mcmillion',
-    profilePic: '',
-    postContent: 'Hello World!!',
-    timeStamp: '2006-07-17T09:24:17Z',
-    liked: false,
-    comments: [
-        { author: "Gregg Mcmillion", newComment: "This is my 1st comment"},
-        { author: "Gregg Mcmillion", newComment: "This is my 2nd comment"}
-    ]},
-    {
-    author: 'Marlyn Cuenca',
-    profilePic: '',
-    postContent: 'Goodbye World!!',
-    timeStamp: '2007-07-17T09:24:17Z',
-    liked: true,
-    comments: [
-        { author: "Gregg Mcmillion", newComment: "This is my 3rd comment"},
-        { author: "Gregg Mcmillion", newComment: "This is my 4th comment"}
-    ]},
-    {
-    author: 'Molly',
-    profilePic: '',
-    postContent: 'Another Post',
-    timeStamp: '2017-07-17T09:24:17Z',
-    liked: true,
-    comments: [
-    ]}
-];
+// var posts = [
+//     {
+//     author: 'Gregg Mcmillion',
+//     profilePic: '',
+//     postContent: 'Hello World!!',
+//     timeStamp: '2006-07-17T09:24:17Z',
+//     liked: false,
+//     comments: [
+//         { author: "Gregg Mcmillion", newComment: "This is my 1st comment"},
+//         { author: "Gregg Mcmillion", newComment: "This is my 2nd comment"}
+//     ]},
+//     {
+//     author: 'Marlyn Cuenca',
+//     profilePic: '',
+//     postContent: 'Goodbye World!!',
+//     timeStamp: '2007-07-17T09:24:17Z',
+//     liked: true,
+//     comments: [
+//         { author: "Gregg Mcmillion", newComment: "This is my 3rd comment"},
+//         { author: "Gregg Mcmillion", newComment: "This is my 4th comment"}
+//     ]},
+//     {
+//     author: 'Molly',
+//     profilePic: '',
+//     postContent: 'Another Post',
+//     timeStamp: '2017-07-17T09:24:17Z',
+//     liked: true,
+//     comments: [
+//     ]}
+// ];
 
+var posts = [];
 var row;
 $(document).ready(function() {
-    //Populate feed with dummy posts
-    for(var i = 0; i < posts.length; i++)
-    {
-        var timeago = jQuery.timeago(posts[i].timeStamp);
-        var divpost = $('<div/>').attr('class', 'post');
-        var imgprof = $('<img/>').attr('src', '/images/post-prof-pic.png');      //Alter for correct prof-pics
-        var divNameTime = $('<div/>').attr('class', 'div-name-time');
-        var span = $('<span/>').text(posts[i].author);
-        var time = $('<time/>').attr('class', 'timeago').text(timeago);
-        divNameTime.append(span).append(time);
-        var btn1 = $('<button/>').attr('class', 'down-arrow');
-        var imgarrow = $('<img/>').attr('src', '/images/down-arrow.png');
-        btn1.append(imgarrow);
-        var p1 = $('<p/>').attr('class', 'post-content').text(posts[i].postContent);
-        var divlike = $('<div/>').attr('class', 'like-comment');
-        var btn2 = $('<button/>').attr('class', 'like-btn');
-        if(posts[i].liked === true) {
-            var imglike = $('<img/>').attr('src', '/images/blue-like.png'); 
-            var p2 = $('<p/>').text('Like').attr('class', 'liked'); 
-        } else {
-            var imglike = $('<img/>').attr('src', '/images/like.png'); 
-            var p2 = $('<p/>').text('Like').attr('class', 'unliked'); 
+
+    //Get all posts which belong to this user
+    var post_url = id+"/posts";
+    $.ajax({
+        url: post_url,
+        type: 'GET'
+    }).done(function(response) {
+        //Store posts to local data structure
+        for(var i = 0; i < response.length; i++) {
+            var newPost = {
+                author: response[i].authorfirstname+' '+response[i].authorlastname,
+                profilePic: '',
+                postContent: response[i].content,
+                timeStamp: response[i].timestamp,
+                liked: false,
+                comments: []
+            };
+            posts[i] = newPost;
         }
-        btn2.append(imglike).append(p2);
-        var btn3 = $('<button/>').attr('class', 'comment-btn')
-        var imgcomment = $('<img/>').attr('src', '/images/comment.png');   
-        var p3 = $('<p/>').text('Comment'); 
-        btn3.append(imgcomment).append(p3);
-        divlike.append(btn2).append(btn3);
-        divpost.append(imgprof).append(divNameTime).append(btn1).append(p1).append(divlike);
-        divAllComments = $('<div/>').attr('class', 'all-comments');
-        divAllComments2 = $('<div/>').attr('class', 'comment-input-div');
-        commentForm = $('<form/>').attr('class', 'comment-input-form');
-        input1 = $('<input/>').attr('class', 'new-comment').attr('type', 'text').attr('placeholder', 'Write a comment...');
-        input2 = $('<input/>').attr('type', 'submit');
-        commentForm.append(input1).append(input2);
-        divAllComments2.append(commentForm);
-        divAllComments.append(divAllComments2);
-        
-        //Append Comments
-        for(var j = 0; j < posts[i].comments.length; j++)
+        //Populate html
+        populate(posts);
+    }); 
+
+    function populate(posts) {
+        //Populate feed with dummy posts
+        for(var i = 0; i < posts.length; i++)
         {
-            var div = $('<div/>').attr('class', 'comment-div');
-            var img = $('<img/>').attr('src', '/images/post-prof-pic.png');
-            var span = $('<span/>').attr('class', 'author').text(posts[i].comments[j].author);
-            var p = $('<p/>').attr('class', 'comment').text(posts[i].comments[j].newComment);
-            div.append(img).append(span).append(p);
-            divAllComments.append(div);
+            var timeago = jQuery.timeago(posts[i].timeStamp);
+            var divpost = $('<div/>').attr('class', 'post');
+            var imgprof = $('<img/>').attr('src', '/images/post-prof-pic.png');      //Alter for correct prof-pics
+            var divNameTime = $('<div/>').attr('class', 'div-name-time');
+            var span = $('<span/>').text(posts[i].author);
+            var time = $('<time/>').attr('class', 'timeago').text(timeago);
+            divNameTime.append(span).append(time);
+            var btn1 = $('<button/>').attr('class', 'down-arrow');
+            var imgarrow = $('<img/>').attr('src', '/images/down-arrow.png');
+            btn1.append(imgarrow);
+            var p1 = $('<p/>').attr('class', 'post-content').text(posts[i].postContent);
+            var divlike = $('<div/>').attr('class', 'like-comment');
+            var btn2 = $('<button/>').attr('class', 'like-btn');
+            if(posts[i].liked === true) {
+                var imglike = $('<img/>').attr('src', '/images/blue-like.png'); 
+                var p2 = $('<p/>').text('Like').attr('class', 'liked'); 
+            } else {
+                var imglike = $('<img/>').attr('src', '/images/like.png'); 
+                var p2 = $('<p/>').text('Like').attr('class', 'unliked'); 
+            }
+            btn2.append(imglike).append(p2);
+            var btn3 = $('<button/>').attr('class', 'comment-btn')
+            var imgcomment = $('<img/>').attr('src', '/images/comment.png');   
+            var p3 = $('<p/>').text('Comment'); 
+            btn3.append(imgcomment).append(p3);
+            divlike.append(btn2).append(btn3);
+            divpost.append(imgprof).append(divNameTime).append(btn1).append(p1).append(divlike);
+            divAllComments = $('<div/>').attr('class', 'all-comments');
+            divAllComments2 = $('<div/>').attr('class', 'comment-input-div');
+            commentForm = $('<form/>').attr('class', 'comment-input-form');
+            input1 = $('<input/>').attr('class', 'new-comment').attr('type', 'text').attr('placeholder', 'Write a comment...');
+            input2 = $('<input/>').attr('type', 'submit');
+            commentForm.append(input1).append(input2);
+            divAllComments2.append(commentForm);
+            divAllComments.append(divAllComments2);
+            
+            //Append Comments
+            for(var j = 0; j < posts[i].comments.length; j++)
+            {
+                var div = $('<div/>').attr('class', 'comment-div');
+                var img = $('<img/>').attr('src', '/images/post-prof-pic.png');
+                var span = $('<span/>').attr('class', 'author').text(posts[i].comments[j].author);
+                var p = $('<p/>').attr('class', 'comment').text(posts[i].comments[j].newComment);
+                div.append(img).append(span).append(p);
+                divAllComments.append(div);
+            }
+            divpost.append(divAllComments);
+            $('#all-posts').prepend(divpost);
         }
-        divpost.append(divAllComments);
-        $('#all-posts').prepend(divpost);
     }
 
     //Post submit button

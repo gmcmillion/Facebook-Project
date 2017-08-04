@@ -33,6 +33,15 @@ app.use('/login', login);
 app.use('/newsfeed', newsfeed);
 app.use('/profile-page', profilePage);
 
+//Logout
+app.get('/logout', function(req, res) {
+	//End client connection on logout
+	client.logout();
+
+	//Redirect to homepage
+	res.redirect('/');
+});
+
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   var err = new Error('Not Found');

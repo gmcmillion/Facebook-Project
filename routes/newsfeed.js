@@ -26,7 +26,22 @@ router.get('/:id', function(req, res, next) {
 });
 
 // GET all posts stored in database
-
+router.get('/:id/posts', function(req, res, next) {
+	console.log('GETTING POSTS');
+	//Query to get all posts from current user
+	//TODO: get posts only from this user, and implement a relation
+	const query = {
+		text: 'SELECT * FROM posts'
+	}	
+	//Run query storing relevant info in newsfeed.ejs page
+	currentClient.query(query, (err, result)=> {
+		if (err) {
+			console.log(err);
+		} else {
+			res.json(result.rows);
+		}
+	});
+});
 
 // POST to newsfeed
 router.post('/:id', function(req, res, next) {
@@ -45,7 +60,10 @@ router.post('/:id', function(req, res, next) {
 	});
 });
 
+// PATCH or edit post content
 
-//
+
+// DELETE posts from newsfeed
+
 
 module.exports = router;

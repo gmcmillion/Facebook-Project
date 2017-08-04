@@ -21,6 +21,7 @@ var currentClient = new function() {
     }
     //Logout
     this.logout = function() {
+        console.log('LOGGING OUT');
         client.end();
     }
 }
