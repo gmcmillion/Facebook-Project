@@ -37,27 +37,27 @@ $(document).ready(function() {
     {
         var timeago = jQuery.timeago(posts[i].timeStamp);
         var divpost = $('<div/>').attr('class', 'post');
-        var imgprof = $('<img/>').attr('src', 'images/post-prof-pic.png');      //Alter for correct prof-pics
+        var imgprof = $('<img/>').attr('src', '/images/post-prof-pic.png');      //Alter for correct prof-pics
         var divNameTime = $('<div/>').attr('class', 'div-name-time');
         var span = $('<span/>').text(posts[i].author);
         var time = $('<time/>').attr('class', 'timeago').text(timeago);
         divNameTime.append(span).append(time);
         var btn1 = $('<button/>').attr('class', 'down-arrow');
-        var imgarrow = $('<img/>').attr('src', 'images/down-arrow.png');
+        var imgarrow = $('<img/>').attr('src', '/images/down-arrow.png');
         btn1.append(imgarrow);
         var p1 = $('<p/>').attr('class', 'post-content').text(posts[i].postContent);
         var divlike = $('<div/>').attr('class', 'like-comment');
         var btn2 = $('<button/>').attr('class', 'like-btn');
         if(posts[i].liked === true) {
-            var imglike = $('<img/>').attr('src', 'images/blue-like.png'); 
+            var imglike = $('<img/>').attr('src', '/images/blue-like.png'); 
             var p2 = $('<p/>').text('Like').attr('class', 'liked'); 
         } else {
-            var imglike = $('<img/>').attr('src', 'images/like.png'); 
+            var imglike = $('<img/>').attr('src', '/images/like.png'); 
             var p2 = $('<p/>').text('Like').attr('class', 'unliked'); 
         }
         btn2.append(imglike).append(p2);
         var btn3 = $('<button/>').attr('class', 'comment-btn')
-        var imgcomment = $('<img/>').attr('src', 'images/comment.png');   
+        var imgcomment = $('<img/>').attr('src', '/images/comment.png');   
         var p3 = $('<p/>').text('Comment'); 
         btn3.append(imgcomment).append(p3);
         divlike.append(btn2).append(btn3);
@@ -75,7 +75,7 @@ $(document).ready(function() {
         for(var j = 0; j < posts[i].comments.length; j++)
         {
             var div = $('<div/>').attr('class', 'comment-div');
-            var img = $('<img/>').attr('src', 'images/post-prof-pic.png');
+            var img = $('<img/>').attr('src', '/images/post-prof-pic.png');
             var span = $('<span/>').attr('class', 'author').text(posts[i].comments[j].author);
             var p = $('<p/>').attr('class', 'comment').text(posts[i].comments[j].newComment);
             div.append(img).append(span).append(p);
@@ -98,23 +98,23 @@ $(document).ready(function() {
         var time = new Date();
         var isoTime = time.toISOString();
         var divpost = $('<div/>').attr('class', 'post');
-        var imgprof = $('<img/>').attr('src', 'images/post-prof-pic.png');
+        var imgprof = $('<img/>').attr('src', '/images/post-prof-pic.png');
         var span = $('<span/>').text('Gregg Mcmillion');
         var timeago = jQuery.timeago(new Date());
         var time = $('<time/>').attr('class', 'timeago').text(timeago);
         var divNameTime = $('<div/>').attr('class', 'div-name-time');
         divNameTime.append(span).append(time);
         var btn1 = $('<button/>').attr('class', 'down-arrow');
-        var imgarrow = $('<img/>').attr('src', 'images/down-arrow.png');
+        var imgarrow = $('<img/>').attr('src', '/images/down-arrow.png');
         btn1.append(imgarrow);
         var p1 = $('<p/>').attr('class', 'post-content').text(post);
         var divlike = $('<div/>').attr('class', 'like-comment');
         var btn2 = $('<button/>').attr('class', 'like-btn');
-        var imglike = $('<img/>').attr('src', 'images/like.png');   
+        var imglike = $('<img/>').attr('src', '/images/like.png');   
         var p2 = $('<p/>').text('Like'); 
         btn2.append(imglike).append(p2);
         var btn3 = $('<button/>').attr('class', 'comment-btn')
-        var imgcomment = $('<img/>').attr('src', 'images/comment.png');   
+        var imgcomment = $('<img/>').attr('src', '/images/comment.png');   
         var p3 = $('<p/>').text('Comment'); 
         btn3.append(imgcomment).append(p3);
         divlike.append(btn2).append(btn3);
@@ -216,11 +216,11 @@ $(document).ready(function() {
         if (posts[calc].liked === false) {
             posts[calc].liked = true;                                   //Update data
             $(this).find('p').attr('class', 'liked');                   //Change the text color
-            $(this).find('img').attr('src', 'images/blue-like.png');    //Change the img  
+            $(this).find('img').attr('src', '/images/blue-like.png');    //Change the img  
         } else {
             posts[calc].liked = false;                                  //Update data
             $(this).find('p').attr('class', 'unliked');                 //Change the text color
-            $(this).find('img').attr('src', 'images/like.png');         //Change the img  
+            $(this).find('img').attr('src', '/images/like.png');         //Change the img  
         }
     }); 
 
@@ -241,7 +241,7 @@ $(document).ready(function() {
 
         //Post comment under post
         var div = $('<div/>').attr('class', 'comment-div');
-        var img = $('<img/>').attr('src', 'images/post-prof-pic.png');
+        var img = $('<img/>').attr('src', '/images/post-prof-pic.png');
         var span = $('<span/>').attr('class', 'author').text('Gregg Mcmillion');
         var p = $('<p/>').attr('class', 'comment').text(comment);
         div.append(img).append(span).append(p);
