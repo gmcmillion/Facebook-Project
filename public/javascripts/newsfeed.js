@@ -97,50 +97,61 @@ $(document).ready(function() {
     function buildPost(post) {
         var time = new Date();
         var isoTime = time.toISOString();
-        var divpost = $('<div/>').attr('class', 'post');
-        var imgprof = $('<img/>').attr('src', '/images/post-prof-pic.png');
-        var span = $('<span/>').text('Gregg Mcmillion');
-        var timeago = jQuery.timeago(new Date());
-        var time = $('<time/>').attr('class', 'timeago').text(timeago);
-        var divNameTime = $('<div/>').attr('class', 'div-name-time');
-        divNameTime.append(span).append(time);
-        var btn1 = $('<button/>').attr('class', 'down-arrow');
-        var imgarrow = $('<img/>').attr('src', '/images/down-arrow.png');
-        btn1.append(imgarrow);
-        var p1 = $('<p/>').attr('class', 'post-content').text(post);
-        var divlike = $('<div/>').attr('class', 'like-comment');
-        var btn2 = $('<button/>').attr('class', 'like-btn');
-        var imglike = $('<img/>').attr('src', '/images/like.png');   
-        var p2 = $('<p/>').text('Like'); 
-        btn2.append(imglike).append(p2);
-        var btn3 = $('<button/>').attr('class', 'comment-btn')
-        var imgcomment = $('<img/>').attr('src', '/images/comment.png');   
-        var p3 = $('<p/>').text('Comment'); 
-        btn3.append(imgcomment).append(p3);
-        divlike.append(btn2).append(btn3);
-        divpost.append(imgprof).append(divNameTime).append(btn1).append(p1).append(divlike);
-        divAllComments = $('<div/>').attr('class', 'all-comments');
-        divAllComments2 = $('<div/>').attr('class', 'comment-input-div');
-        commentForm = $('<form/>').attr('class', 'comment-input-form');
-        input1 = $('<input/>').attr('class', 'new-comment').attr('type', 'text').attr('placeholder', 'Write a comment...');
-        input2 = $('<input/>').attr('type', 'submit');
-        commentForm.append(input1).append(input2);
-        divAllComments2.append(commentForm);
-        divAllComments.append(divAllComments2);
-        divpost.append(divAllComments);
-        $('#all-posts').prepend(divpost);
 
-        //Create object to add to local array
-        var postObj = {
-            author: 'Gregg Mcmillion', 
-            profilePic: '', 
-            postContent: post, 
-            timeStamp: isoTime,
-            liked: false, 
-            comments: []
-        };
-        //Add to local data structure
-        posts[posts.length] = postObj;
+        //Ajax call to post
+        var post_url = id;
+        $.post(post_url, { 
+            content: post,
+            fname: first_name,
+            lname: last_name,
+            time: isoTime
+        }).done(function(response) {  
+            //Add post to local data structure
+            var newPost = {
+                author: response.authorfirstname+' '+response.authorlastname,
+                profilePic: '',
+                postContent: response.content,
+                timeStamp: response.timestamp,
+                liked: false,
+                comments: []
+            };
+            var len = posts.length;
+            posts[len] = newPost;
+
+            //Generate html code for new post
+            var divpost = $('<div/>').attr('class', 'post');
+            var imgprof = $('<img/>').attr('src', '/images/post-prof-pic.png');
+            var span = $('<span/>').text(response.authorfirstname+' '+response.authorlastname);
+            var timeago = jQuery.timeago(response.timestamp);
+            var time = $('<time/>').attr('class', 'timeago').text(timeago);
+            var divNameTime = $('<div/>').attr('class', 'div-name-time');
+            divNameTime.append(span).append(time);
+            var btn1 = $('<button/>').attr('class', 'down-arrow');
+            var imgarrow = $('<img/>').attr('src', '/images/down-arrow.png');
+            btn1.append(imgarrow);
+            var p1 = $('<p/>').attr('class', 'post-content').text(response.content);
+            var divlike = $('<div/>').attr('class', 'like-comment');
+            var btn2 = $('<button/>').attr('class', 'like-btn');
+            var imglike = $('<img/>').attr('src', '/images/like.png');   
+            var p2 = $('<p/>').text('Like'); 
+            btn2.append(imglike).append(p2);
+            var btn3 = $('<button/>').attr('class', 'comment-btn')
+            var imgcomment = $('<img/>').attr('src', '/images/comment.png');   
+            var p3 = $('<p/>').text('Comment'); 
+            btn3.append(imgcomment).append(p3);
+            divlike.append(btn2).append(btn3);
+            divpost.append(imgprof).append(divNameTime).append(btn1).append(p1).append(divlike);
+            divAllComments = $('<div/>').attr('class', 'all-comments');
+            divAllComments2 = $('<div/>').attr('class', 'comment-input-div');
+            commentForm = $('<form/>').attr('class', 'comment-input-form');
+            input1 = $('<input/>').attr('class', 'new-comment').attr('type', 'text').attr('placeholder', 'Write a comment...');
+            input2 = $('<input/>').attr('type', 'submit');
+            commentForm.append(input1).append(input2);
+            divAllComments2.append(commentForm);
+            divAllComments.append(divAllComments2);
+            divpost.append(divAllComments);
+            $('#all-posts').prepend(divpost);
+        });
     }
 
     //Dropdown menu for down arrow

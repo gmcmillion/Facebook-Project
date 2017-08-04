@@ -14,8 +14,8 @@
                 </tr>
                 <tr id="input-boxes">
                     <form method="post" action="login/signIn">
-                        <td><input type="text" id="loginEmail" name="loginEmail"></input></td>
-                        <td><input type="text" id="loginPassword" name="loginPassword"></input></td>
+                        <td><input type="text" id="loginEmail" name="loginEmail"autocomplete="off" required></input></td>
+                        <td><input type="password" id="loginPassword" name="loginPassword" autocomplete="off" required></input></td>
                         <td><input type="submit" value="Log In" id="login-btn"></input></td>
                     </form>
                 </tr>
@@ -30,13 +30,13 @@
             <h1 id="sign-up">Sign Up</h1>
             <form method="post" action="login/reg">
                 <div id="name">
-                    <input type="text" id="first-name" placeholder="First Name" name="firstName"></input>
-                    <input type="text" id="last-name" placeholder="Last Name" name="lastName"></input>
+                    <input type="text" id="first-name" placeholder="First Name" name="firstName" autocomplete="off" required></input>
+                    <input type="text" id="last-name" placeholder="Last Name" name="lastName" autocomplete="off" required></input>
                 </div>
                 <div id="email-password">
-                    <input type="email" id="email" placeholder="Email" name="email"></input>
+                    <input type="email" id="email" placeholder="Email" name="email" autocomplete="off" required></input>
                     </br>
-                    <input type="password" id="password" placeholder="New Password" name="password"></input>
+                    <input type="password" id="password" placeholder="New Password" name="password" autocomplete="off" required></input>
                 </div>
                 <div id="birthday">
                     <p>Birthday<p>
@@ -162,8 +162,9 @@
                 </div>  
             </form>
         </div>
-
+        <!--
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js" type="text/javascript"></script>
         <script src="/javascripts/login.js"></script>
+        -->
     </body>
 </html>
