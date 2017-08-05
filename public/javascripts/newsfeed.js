@@ -43,7 +43,7 @@ $(document).ready(function() {
         //Store posts to local data structure
         for(var i = 0; i < response.length; i++) {
             var newPost = {
-                author: response[i].authorfirstname+' '+response[i].authorlastname,
+                author: response[i].author,
                 profilePic: '',
                 postContent: response[i].content,
                 timeStamp: response[i].timestamp,
@@ -57,14 +57,14 @@ $(document).ready(function() {
     }); 
 
     function populate(posts) {
-        //Populate feed with dummy posts
+        //Populate newsfeed with posts
         for(var i = 0; i < posts.length; i++)
         {
-            var timeago = jQuery.timeago(posts[i].timeStamp);
             var divpost = $('<div/>').attr('class', 'post');
             var imgprof = $('<img/>').attr('src', '/images/post-prof-pic.png');      //Alter for correct prof-pics
             var divNameTime = $('<div/>').attr('class', 'div-name-time');
             var span = $('<span/>').text(posts[i].author);
+            var timeago = jQuery.timeago(posts[i].timeStamp);
             var time = $('<time/>').attr('class', 'timeago').text(timeago);
             divNameTime.append(span).append(time);
             var btn1 = $('<button/>').attr('class', 'down-arrow');
@@ -117,6 +117,7 @@ $(document).ready(function() {
         var post = $('#post-input-box').val();
         this.reset();
         buildPost(post);
+        console.log(posts);
     });
 
     //Build a new post
@@ -126,36 +127,27 @@ $(document).ready(function() {
 
         //Ajax call to post
         var post_url = id;
-        $.post(post_url, { 
+        $.post(post_url, {
+            author: author,
             content: post,
-            fname: first_name,
-            lname: last_name,
             time: isoTime
         }).done(function(response) {  
             //Add post to local data structure
-            var newPost = {
-                author: response.authorfirstname+' '+response.authorlastname,
-                profilePic: '',
-                postContent: response.content,
-                timeStamp: response.timestamp,
-                liked: false,
-                comments: []
-            };
             var len = posts.length;
-            posts[len] = newPost;
+            posts[len] = response;
 
             //Generate html code for new post
             var divpost = $('<div/>').attr('class', 'post');
             var imgprof = $('<img/>').attr('src', '/images/post-prof-pic.png');
-            var span = $('<span/>').text(response.authorfirstname+' '+response.authorlastname);
-            var timeago = jQuery.timeago(response.timestamp);
+            var span = $('<span/>').text(posts[len].author);
+            var timeago = jQuery.timeago(posts[len].timestamp);
             var time = $('<time/>').attr('class', 'timeago').text(timeago);
             var divNameTime = $('<div/>').attr('class', 'div-name-time');
             divNameTime.append(span).append(time);
             var btn1 = $('<button/>').attr('class', 'down-arrow');
             var imgarrow = $('<img/>').attr('src', '/images/down-arrow.png');
             btn1.append(imgarrow);
-            var p1 = $('<p/>').attr('class', 'post-content').text(response.content);
+            var p1 = $('<p/>').attr('class', 'post-content').text(posts[len].content);
             var divlike = $('<div/>').attr('class', 'like-comment');
             var btn2 = $('<button/>').attr('class', 'like-btn');
             var imglike = $('<img/>').attr('src', '/images/like.png');   

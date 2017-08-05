@@ -20,7 +20,8 @@ router.get('/:id', function(req, res, next) {
 		if (err) {
 			console.log(err);
 		} else {
-			res.render('newsfeed', {id: req.params.id, first_name: result.rows[0].first_name, last_name: result.rows[0].last_name});
+			var author = result.rows[0].first_name + ' ' + result.rows[0].last_name;
+			res.render('newsfeed', {id: req.params.id, author: author});
 		}
 	});
 });
@@ -46,11 +47,11 @@ router.get('/:id/posts', function(req, res, next) {
 // POST to newsfeed
 router.post('/:id', function(req, res, next) {
 	//If Table doesnt exist, create 'posts' table
-	currentClient.query('CREATE TABLE IF NOT EXISTS posts(id SERIAL PRIMARY KEY, authorfirstname VARCHAR(50), authorlastname VARCHAR(50), content VARCHAR(50), timestamp VARCHAR(50))');
+	currentClient.query('CREATE TABLE IF NOT EXISTS posts(id SERIAL PRIMARY KEY, author VARCHAR(100), profilepic VARCHAR(100), content VARCHAR(50), timestamp VARCHAR(50), liked VARCHAR(10), commentsid VARCHAR(100))');
 
 	//Insert data into table
-	var userQuery = 'INSERT INTO posts(authorfirstname, authorlastname, content, timestamp) VALUES($1, $2, $3, $4) RETURNING *'
-	var values = [req.body.fname, req.body.lname, req.body.content, req.body.time];
+	var userQuery = 'INSERT INTO posts(author, content, timestamp) VALUES($1, $2, $3) RETURNING *'
+	var values = [req.body.author, req.body.content, req.body.time];
 	currentClient.query(userQuery, values, function (err, result) {
 		if (err) {
 			console.log(err);
