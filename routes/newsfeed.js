@@ -32,7 +32,7 @@ router.get('/:id/posts', function(req, res, next) {
 	//Query to get all posts from current user
 	//TODO: get posts only from this user, and implement a relation
 	const query = {
-		text: 'SELECT * FROM posts'
+		text: 'SELECT * FROM posts ORDER BY id'
 	}	
 	//Run query storing relevant info in newsfeed.ejs page
 	currentClient.query(query, (err, result)=> {
