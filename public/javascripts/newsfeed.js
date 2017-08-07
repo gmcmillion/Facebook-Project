@@ -181,12 +181,9 @@ $(document).ready(function() {
         $("#post-dropdown").toggle();   //close dropdown
         var calc = posts.length - row - 1;
 
-        //Update database post
-        
-
         //Populate modal
         $('#modal-author').html(posts[calc].author);
-        $('#modal-post-content input[type=text]').val(posts[calc].postContent);
+        $('#modal-post-content input[type=text]').val(posts[calc].content);
 
         $('#myModal').toggle();         //display modal
     });
@@ -197,11 +194,24 @@ $(document).ready(function() {
         var edits = $('#modal-post-content input[type=text]').val();
         var calc = posts.length - row - 1;
 
-        //Store edit in html code
-        $('#all-posts div:nth-child('+(row+1)+')').find('.post-content').html(edits);
+        //Generate post url
+        var post_url = posts[calc].id+"/editpost";
 
-        //Store edit in local database
-        posts[calc].postContent = edits;
+        //Patch new edit
+        $.ajax({
+            url: post_url,
+            type: "PATCH",
+            dataType: 'json',
+            data: {
+                edit: edits
+            }
+        }).done(function(response) {
+            //Store edit in html code
+            $('#all-posts div:nth-child('+(row+1)+')').find('.post-content').html(edits);
+
+            //Store edit in local database
+            posts[calc].postContent = edits;
+        });
 
         //Close modal
         $('#myModal').toggle(); 
@@ -248,7 +258,7 @@ $(document).ready(function() {
         var calc = posts.length - row - 1;
 
         if (posts[calc].liked === false) {
-            posts[calc].liked = true;                                   //Update data
+            posts[calc].liked = true;                                   //Update local data
             $(this).find('p').attr('class', 'liked');                   //Change the text color
             $(this).find('img').attr('src', '/images/blue-like.png');   //Change the img  
         } else {
@@ -257,8 +267,20 @@ $(document).ready(function() {
             $(this).find('img').attr('src', '/images/like.png');        //Change the img  
         }
 
-        //Update database post
+        //Generate post url
+        var post_url = posts[calc].id+"/editlike";
 
+        //Patch likes
+        $.ajax({
+            url: post_url,
+            type: "PATCH",
+            dataType: 'json',
+            data: {
+                like: posts[calc].liked
+            }
+        }).done(function(response) {
+
+        });
     }); 
 
     //Toggle comment input box to comment on a post

@@ -62,10 +62,39 @@ router.post('/:id', function(req, res, next) {
 });
 
 // PATCH for edit post content 
-
+router.patch('/:pid/editpost', function(req, res) {	
+	//Update query
+	const query = {
+		text: 'UPDATE posts SET content = $1 WHERE id = $2',
+		values: [req.body.edit, req.params.pid]
+	}	
+	//Run query
+	currentClient.query(query, (err, result)=> {
+		if (err) {
+			console.log(err);
+		} else {
+			res.json(result);
+		}
+	});
+});
 
 // PATCH for liking a post 
-
+router.patch('/:pid/editlike', function(req, res) {	
+	//Update query
+	const query = {
+		text: 'UPDATE posts SET liked = $1 WHERE id = $2',
+		values: [req.body.like, req.params.pid]
+	}	
+	//Run query
+	currentClient.query(query, (err, result)=> {
+		if (err) {
+			console.log(err);
+		} else {
+			console.log('liked');
+			res.json(result);
+		}
+	});
+});
 
 // DELETE posts from newsfeed
 router.delete('/:uid/deletePost/:pid', function(req, res) {
@@ -74,7 +103,7 @@ router.delete('/:uid/deletePost/:pid', function(req, res) {
 		text: 'DELETE FROM posts WHERE id = $1',
 		values: [req.params.pid]
 	}	
-	//Run query storing relevant info in newsfeed.ejs page
+	//Run query
 	currentClient.query(query, (err, result)=> {
 		if (err) {
 			console.log(err);
