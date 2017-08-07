@@ -47,7 +47,7 @@ router.get('/:id/posts', function(req, res, next) {
 // POST to newsfeed
 router.post('/:id', function(req, res, next) {
 	//If Table doesnt exist, create 'posts' table
-	currentClient.query('CREATE TABLE IF NOT EXISTS posts(id SERIAL PRIMARY KEY, author VARCHAR(100), profilepic VARCHAR(100), content VARCHAR(50), timestamp VARCHAR(50), liked VARCHAR(10), commentsid VARCHAR(100))');
+	currentClient.query('CREATE TABLE IF NOT EXISTS posts(id SERIAL PRIMARY KEY, author VARCHAR(100), profilepic VARCHAR(100), content VARCHAR(50), timestamp VARCHAR(50), liked BOOLEAN DEFAULT FALSE, commentsid VARCHAR(100))');
 
 	//Insert data into table
 	var userQuery = 'INSERT INTO posts(author, content, timestamp) VALUES($1, $2, $3) RETURNING *'
@@ -61,10 +61,27 @@ router.post('/:id', function(req, res, next) {
 	});
 });
 
-// PATCH or edit post content
+// PATCH for edit post content 
+
+
+// PATCH for liking a post 
 
 
 // DELETE posts from newsfeed
-
+router.delete('/:uid/deletePost/:pid', function(req, res) {
+	//Delete query
+	const query = {
+		text: 'DELETE FROM posts WHERE id = $1',
+		values: [req.params.pid]
+	}	
+	//Run query storing relevant info in newsfeed.ejs page
+	currentClient.query(query, (err, result)=> {
+		if (err) {
+			console.log(err);
+		} else {
+			res.json(result);
+		}
+	});
+});
 
 module.exports = router;

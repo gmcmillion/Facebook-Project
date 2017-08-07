@@ -40,17 +40,9 @@ $(document).ready(function() {
         url: post_url,
         type: 'GET'
     }).done(function(response) {
-        //Store posts to local data structure
+        //Store database posts to local data structure
         for(var i = 0; i < response.length; i++) {
-            var newPost = {
-                author: response[i].author,
-                profilePic: '',
-                postContent: response[i].content,
-                timeStamp: response[i].timestamp,
-                liked: false,
-                comments: []
-            };
-            posts[i] = newPost;
+            posts[i] = response[i];
         }
         //Populate html
         populate(posts);
@@ -64,13 +56,13 @@ $(document).ready(function() {
             var imgprof = $('<img/>').attr('src', '/images/post-prof-pic.png');      //Alter for correct prof-pics
             var divNameTime = $('<div/>').attr('class', 'div-name-time');
             var span = $('<span/>').text(posts[i].author);
-            var timeago = jQuery.timeago(posts[i].timeStamp);
+            var timeago = jQuery.timeago(posts[i].timestamp);
             var time = $('<time/>').attr('class', 'timeago').text(timeago);
             divNameTime.append(span).append(time);
             var btn1 = $('<button/>').attr('class', 'down-arrow');
             var imgarrow = $('<img/>').attr('src', '/images/down-arrow.png');
             btn1.append(imgarrow);
-            var p1 = $('<p/>').attr('class', 'post-content').text(posts[i].postContent);
+            var p1 = $('<p/>').attr('class', 'post-content').text(posts[i].content);
             var divlike = $('<div/>').attr('class', 'like-comment');
             var btn2 = $('<button/>').attr('class', 'like-btn');
             if(posts[i].liked === true) {
@@ -97,6 +89,7 @@ $(document).ready(function() {
             divAllComments.append(divAllComments2);
             
             //Append Comments
+            /*
             for(var j = 0; j < posts[i].comments.length; j++)
             {
                 var div = $('<div/>').attr('class', 'comment-div');
@@ -106,6 +99,7 @@ $(document).ready(function() {
                 div.append(img).append(span).append(p);
                 divAllComments.append(div);
             }
+            */
             divpost.append(divAllComments);
             $('#all-posts').prepend(divpost);
         }
@@ -117,7 +111,6 @@ $(document).ready(function() {
         var post = $('#post-input-box').val();
         this.reset();
         buildPost(post);
-        console.log(posts);
     });
 
     //Build a new post
@@ -188,6 +181,9 @@ $(document).ready(function() {
         $("#post-dropdown").toggle();   //close dropdown
         var calc = posts.length - row - 1;
 
+        //Update database post
+        
+
         //Populate modal
         $('#modal-author').html(posts[calc].author);
         $('#modal-post-content input[type=text]').val(posts[calc].postContent);
@@ -227,13 +223,22 @@ $(document).ready(function() {
     //Delete post
     $("#delete-post").click(function() {
         $("#post-dropdown").toggle();
-        
-        //Delete from local data structure
         var calc = posts.length - row - 1;
-        posts.splice(calc, 1);
 
-        //Delete post from html       
-        $('#all-posts .post:nth-child('+(row+1)+')').remove();
+        //Generate delete url
+        var post_url = id+"/deletePost/"+posts[calc].id;
+        
+        //Delete from api
+        $.ajax({
+            url: post_url,
+            type: "DELETE"
+        }).done(function(response) { 
+            //Delete from local data structure
+            posts.splice(calc, 1);
+
+            //Delete post from html       
+            $('#all-posts .post:nth-child('+(row+1)+')').remove();
+        });
     });
 
     //Like or Unlike a post
@@ -245,12 +250,15 @@ $(document).ready(function() {
         if (posts[calc].liked === false) {
             posts[calc].liked = true;                                   //Update data
             $(this).find('p').attr('class', 'liked');                   //Change the text color
-            $(this).find('img').attr('src', '/images/blue-like.png');    //Change the img  
+            $(this).find('img').attr('src', '/images/blue-like.png');   //Change the img  
         } else {
             posts[calc].liked = false;                                  //Update data
             $(this).find('p').attr('class', 'unliked');                 //Change the text color
-            $(this).find('img').attr('src', '/images/like.png');         //Change the img  
+            $(this).find('img').attr('src', '/images/like.png');        //Change the img  
         }
+
+        //Update database post
+
     }); 
 
     //Toggle comment input box to comment on a post
