@@ -9,7 +9,7 @@ router.get('/', function(req, res, next) {
 });
 
 // GET newsfeed page w/ id
-router.get('/:id', function(req, res, next) {
+router.get('/:id', requireLogin, function(req, res, next) {
 	//Query for firstname, lastname
 	const query = {
 		text: 'SELECT * FROM users WHERE id = $1',
@@ -148,5 +148,14 @@ router.post('/:pid/comment', function(req, res, next) {
 		}
 	});
 });
+
+//Check if user is logged in, otherwise redirect to login page
+function requireLogin (req, res, next) {
+	if (!req.user) {
+		res.redirect('/');
+	} else {
+		next();
+	}
+};
 
 module.exports = router;

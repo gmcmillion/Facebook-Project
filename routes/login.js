@@ -42,6 +42,8 @@ router.post('/signIn', function(req, res, next) {
 				console.log('password doesnt match');
 			}
 			*/
+			//Sets a cookie with the users info
+			req.session.user = result.rows[0];
 			res.redirect('../newsfeed/'+result.rows[0].id);
 		}
 	});
@@ -58,7 +60,8 @@ router.post('/reg', function(req, res) {
 		if (err) {
 			console.log(err);
 		} else {
-			console.log('id: '+result.rows[0].id);
+			//Sets a cookie with the users info
+			req.session.user = result.rows[0];
 			res.redirect('../newsfeed/'+result.rows[0].id);
 		}
 	});

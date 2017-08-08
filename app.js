@@ -14,6 +14,7 @@ var profilePage = require('./routes/profile-page');
 //Postgres
 var client = require('./postgres.js');
 client.connect();		//Establish connection with client
+var currentClient = client.getClient();
 
 var app = express();
 
@@ -32,16 +33,25 @@ app.use(sessions({
 	ephemeral: true   //deletes the cookie when the browser is closed
 }));
 
-/*
 //Session middleware
 app.use(function(req, res, next) {
-  	if (req.session && req.session.user) {
-		models.User.findOne({ email: req.session.user.email }, function(err, user) {
-			if (user) {
-				req.user = user;
-				delete req.user.password; //delete the password from the session
-				req.session.user = user;  //refresh the session value
-				res.locals.user = user;
+	if (req.session && req.session.user) {
+		//Query to get all comments from current post
+		const query = {
+			text: 'SELECT * FROM users WHERE email = $1', 
+			values: [req.session.user.email]
+		}	
+		//Run query storing relevant info in newsfeed.ejs page
+		currentClient.query(query, (err, result)=> {
+			if (err) {
+				console.log(err);
+			} else {
+				if(result.rows.length != 0) {
+					req.user = result.rows[0];
+					delete req.user.password; 			// delete the password from the session
+					req.session.user = result.rows[0];  //refresh the session value
+					res.locals.user = result.rows[0];
+				}
 			}
 			// finishing processing the middleware and run the route
 			next();
@@ -53,13 +63,15 @@ app.use(function(req, res, next) {
 
 //Reset session when user logs out
 app.get('/logout', function(req, res) {
-	console.log('router.get/logout');
+	//Reset the session
 	req.session.reset();
+
+	//End client connection on logout
+	client.logout();
 	
 	//Redirect to homepage
-	res.redirect('/users');
+	res.redirect('/');
 });
-*/
 
 // uncomment after placing your favicon in /public
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
@@ -74,31 +86,22 @@ app.use('/login', login);
 app.use('/newsfeed', newsfeed);
 app.use('/profile-page', profilePage);
 
-//Logout
-app.get('/logout', function(req, res) {
-	//End client connection on logout
-	client.logout();
-
-	//Redirect to homepage
-	res.redirect('/');
-});
-
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
-  var err = new Error('Not Found');
-  err.status = 404;
-  next(err);
+	var err = new Error('Not Found');
+	err.status = 404;
+	next(err);
 });
 
 // error handler
 app.use(function(err, req, res, next) {
-  // set locals, only providing error in development
-  res.locals.message = err.message;
-  res.locals.error = req.app.get('env') === 'development' ? err : {};
+	// set locals, only providing error in development
+	res.locals.message = err.message;
+	res.locals.error = req.app.get('env') === 'development' ? err : {};
 
-  // render the error page
-  res.status(err.status || 500);
-  res.render('error');
+	// render the error page
+	res.status(err.status || 500);
+	res.render('error');
 });
 
 module.exports = app;
