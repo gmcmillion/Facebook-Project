@@ -11,7 +11,7 @@ var currentClient = new function() {
             if(!err){
                 console.log('CLIENT CONNECTED');
                 //Run query with client to create users table
-                client.query('CREATE TABLE IF NOT EXISTS users(id SERIAL PRIMARY KEY, first_name VARCHAR(50), last_name VARCHAR(50), email VARCHAR(100), pass VARCHAR(50), gender VARCHAR(6))');
+                client.query('CREATE TABLE IF NOT EXISTS users(id SERIAL PRIMARY KEY, first_name VARCHAR(50), last_name VARCHAR(50), email VARCHAR(100), pass VARCHAR(100), gender VARCHAR(6), profilepic VARCHAR(100))');
             }
         });
     }

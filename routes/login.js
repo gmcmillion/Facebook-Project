@@ -11,13 +11,12 @@ router.get('/', function(req, res, next) {
 
 //Check if email and password exists, and redirect to newsfeed
 router.post('/signIn', function(req, res, next) {
-	console.log(req.body);
-
 	//Construct query
 	const query = {
 		text: 'SELECT * FROM users WHERE email = $1 AND pass = $2',
 		values: [req.body.loginEmail, req.body.loginPassword]
 	}
+
 	/*
 	const query = {
 		text: 'SELECT * FROM users WHERE email = $1',
@@ -30,17 +29,19 @@ router.post('/signIn', function(req, res, next) {
 		if (err) {
 			console.log(err);
 		} else {
+			/*
 			console.log(result.rows[0]);
-			// var hash = result.rows[0].pass;
-			// console.log(passwordHash.verify('hello', hash));
+			console.log(passwordHash.verify(req.body.loginPassword, result.rows[0].pass));
+
 			//Verify hashed password matches
-			// if(passwordHash.verify(req.body.loginPassword, result.rows[0].pass))
-			// {
-			// 	console.log('matches');
-			// 	res.redirect('../newsfeed/'+result.rows[0].id);
-			// } else {
-			// 	console.log('password doesnt match');
-			// }
+			if(passwordHash.verify(req.body.loginPassword, result.rows[0].pass))
+			{
+				console.log('matches');
+				res.redirect('../newsfeed/'+result.rows[0].id);
+			} else {
+				console.log('password doesnt match');
+			}
+			*/
 			res.redirect('../newsfeed/'+result.rows[0].id);
 		}
 	});
@@ -50,7 +51,7 @@ router.post('/signIn', function(req, res, next) {
 router.post('/reg', function(req, res) {
 	//Hash password
 	var hashedPassword = passwordHash.generate('req.body.password');
-	
+
 	var userQuery = 'INSERT INTO users(first_name, last_name, email, pass, gender) VALUES($1, $2, $3, $4, $5) RETURNING *'
 	var values = [req.body.firstName, req.body.lastName, req.body.email, hashedPassword, req.body.gender];
 	currentClient.query(userQuery, values, function (err, result) {

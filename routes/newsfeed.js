@@ -28,7 +28,10 @@ router.get('/:id', function(req, res, next) {
 
 // GET all posts stored in database
 router.get('/:id/posts', function(req, res, next) {
-	console.log('GETTING POSTS');
+	//If Table doesnt exist, create 'posts' table
+	//currentClient.query('CREATE TABLE IF NOT EXISTS posts(id SERIAL PRIMARY KEY, author VARCHAR(100), profilepic VARCHAR(100), content VARCHAR(50), timestamp VARCHAR(50), liked BOOLEAN DEFAULT FALSE, commentsid integer[])');
+	currentClient.query('CREATE TABLE IF NOT EXISTS posts(id SERIAL PRIMARY KEY, author VARCHAR(100), profilepic VARCHAR(100), content VARCHAR(50), timestamp VARCHAR(50), liked BOOLEAN DEFAULT FALSE)');
+
 	//Query to get all posts from current user
 	//TODO: get posts only from this user, and implement a relation
 	const query = {
@@ -46,9 +49,6 @@ router.get('/:id/posts', function(req, res, next) {
 
 // POST to newsfeed
 router.post('/:id', function(req, res, next) {
-	//If Table doesnt exist, create 'posts' table
-	currentClient.query('CREATE TABLE IF NOT EXISTS posts(id SERIAL PRIMARY KEY, author VARCHAR(100), profilepic VARCHAR(100), content VARCHAR(50), timestamp VARCHAR(50), liked BOOLEAN DEFAULT FALSE, commentsid VARCHAR(100))');
-
 	//Insert data into table
 	var userQuery = 'INSERT INTO posts(author, content, timestamp) VALUES($1, $2, $3) RETURNING *'
 	var values = [req.body.author, req.body.content, req.body.time];
@@ -109,6 +109,42 @@ router.delete('/:uid/deletePost/:pid', function(req, res) {
 			console.log(err);
 		} else {
 			res.json(result);
+		}
+	});
+});
+
+// GET all comments for a specific post
+router.get('/:pid/allcomments', function(req, res, next) {
+	//If Table doesnt exist, create 'posts' table
+	currentClient.query('CREATE TABLE IF NOT EXISTS comments(commentid SERIAL PRIMARY KEY, postid VARCHAR(50), author VARCHAR(100), profilepic VARCHAR(100), comment VARCHAR(200))');
+
+	//Query to get all comments from current post
+	const query = {
+		text: 'SELECT * FROM comments WHERE postid = $1', 
+		values: [req.params.pid]
+	}	
+	//Run query storing relevant info in newsfeed.ejs page
+	currentClient.query(query, (err, result)=> {
+		if (err) {
+			console.log(err);
+		} else {
+			res.json(result.rows);
+		}
+	});
+});
+
+// POST comments
+router.post('/:pid/comment', function(req, res, next) {
+	//Create comment table if it doesnt exist
+	currentClient.query('CREATE TABLE IF NOT EXISTS comments(commentid SERIAL PRIMARY KEY, postid VARCHAR(50), author VARCHAR(100), profilepic VARCHAR(100), comment VARCHAR(200))');
+	//Insert data into table
+	const query = 'INSERT INTO comments(postid, author, comment) VALUES($1, $2, $3) RETURNING *'
+	const values = [req.params.pid, req.body.author, req.body.newComment];
+	currentClient.query(query, values, function (err, result) {
+		if (err) {
+			console.log(err);
+		} else {
+			res.json(result.rows[0]);
 		}
 	});
 });

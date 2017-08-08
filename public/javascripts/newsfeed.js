@@ -31,6 +31,7 @@
 // ];
 
 var posts = [];
+var comments = [];
 var row;
 $(document).ready(function() {
 
@@ -83,22 +84,30 @@ $(document).ready(function() {
             divAllComments2 = $('<div/>').attr('class', 'comment-input-div');
             commentForm = $('<form/>').attr('class', 'comment-input-form');
             input1 = $('<input/>').attr('class', 'new-comment').attr('type', 'text').attr('placeholder', 'Write a comment...');
-            input2 = $('<input/>').attr('type', 'submit');
+            input2 = $('<input/>').attr('type', 'submit').attr('class', 'comment-submit-button');
             commentForm.append(input1).append(input2);
             divAllComments2.append(commentForm);
             divAllComments.append(divAllComments2);
-            
-            //Append Comments
+
             /*
-            for(var j = 0; j < posts[i].comments.length; j++)
-            {
-                var div = $('<div/>').attr('class', 'comment-div');
-                var img = $('<img/>').attr('src', '/images/post-prof-pic.png');
-                var span = $('<span/>').attr('class', 'author').text(posts[i].comments[j].author);
-                var p = $('<p/>').attr('class', 'comment').text(posts[i].comments[j].newComment);
-                div.append(img).append(span).append(p);
-                divAllComments.append(div);
-            }
+            //Ajax call for comments
+            var post_url = posts[i].id+"/allcomments";
+            $.ajax({
+                url: post_url,
+                type: 'GET'
+            }).done(function(response) {                
+                //Append Comments
+                for(var j = 0; j < response.length; j++)
+                {
+                    var div = $('<div/>').attr('class', 'comment-div');
+                    var img = $('<img/>').attr('src', '/images/post-prof-pic.png');
+                    var span = $('<span/>').attr('class', 'author').text(response[j].author);
+                    var p = $('<p/>').attr('class', 'comment').text(response[j].comment);
+                    div.append(img).append(span).append(p);
+                    divAllComments.append(div);
+                }    
+                
+            }); 
             */
             divpost.append(divAllComments);
             $('#all-posts').prepend(divpost);
@@ -156,7 +165,7 @@ $(document).ready(function() {
             divAllComments2 = $('<div/>').attr('class', 'comment-input-div');
             commentForm = $('<form/>').attr('class', 'comment-input-form');
             input1 = $('<input/>').attr('class', 'new-comment').attr('type', 'text').attr('placeholder', 'Write a comment...');
-            input2 = $('<input/>').attr('type', 'submit');
+            input2 = $('<input/>').attr('type', 'submit').attr('class', 'comment-submit-button');
             commentForm.append(input1).append(input2);
             divAllComments2.append(commentForm);
             divAllComments.append(divAllComments2);
@@ -292,26 +301,31 @@ $(document).ready(function() {
     });
 
     //Get new comment on submit
-    $('.comment-input-form').submit(function(e) {
+    $('#all-posts').on('submit', '.comment-input-form', function(e) {
         e.preventDefault();
         $(this).parent().toggle();  //Close input box
         var comment = $(this).find('.new-comment').val();
         this.reset();
-
-        //Post comment under post
-        var div = $('<div/>').attr('class', 'comment-div');
-        var img = $('<img/>').attr('src', '/images/post-prof-pic.png');
-        var span = $('<span/>').attr('class', 'author').text('Gregg Mcmillion');
-        var p = $('<p/>').attr('class', 'comment').text(comment);
-        div.append(img).append(span).append(p);
-        $(this).parent().parent().append(div);
-
-        //Add comment to data structure
-        var newComment = {
-            author: 'Gregg Mcmillion', 
-            newComment: comment
-        };
         var calc = posts.length - row - 1;
-        posts[calc].comments.push(newComment);
+
+        //Add comment to database
+        var post_url = posts[calc].id+'/comment';
+        
+        $.post(post_url, {
+            author: author,
+            newComment: comment
+        }).done(function(response) {  
+            //Store locally
+            var commlength = comments.length;
+            comments[commlength] = response;
+
+            //Post comment html under post
+            var div = $('<div/>').attr('class', 'comment-div');
+            var img = $('<img/>').attr('src', '/images/post-prof-pic.png');
+            var span = $('<span/>').attr('class', 'author').text(response.author);
+            var p = $('<p/>').attr('class', 'comment').text(response.comment);
+            div.append(img).append(span).append(p);
+            $('#all-posts div:nth-child('+(row+1)+') .all-comments').append(div);
+        });
     });
 });
