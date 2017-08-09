@@ -42,18 +42,35 @@ router.post('/reg', function(req, res) {
 	//Hash password
 	var hashedPassword = passwordHash.generate(req.body.password);
 
-	//Check to prevent registering email twice
-
-
-	var userQuery = 'INSERT INTO users(first_name, last_name, email, pass, gender) VALUES($1, $2, $3, $4, $5) RETURNING *'
-	var values = [req.body.firstName, req.body.lastName, req.body.email, hashedPassword, req.body.gender];
-	currentClient.query(userQuery, values, function (err, result) {
+	//Query to prevent registering email twice
+	const query1 = {
+		text: 'SELECT * FROM users WHERE email = $1',
+		values: [req.body.email]
+	}
+	currentClient.query(query1, (err, result)=> {
 		if (err) {
 			console.log(err);
 		} else {
-			//Sets a cookie with the users info
-			req.session.user = result.rows[0];
-			res.redirect('../newsfeed/'+result.rows[0].id);
+			if(result.rows.length > 0)
+			{
+				console.log('EMAIL EXISTS ALREADY');
+				res.redirect('/');
+			} else {
+				//Register new user
+				const query2 = {
+					text: 'INSERT INTO users(first_name, last_name, email, pass, gender) VALUES($1, $2, $3, $4, $5) RETURNING *',
+					values: [req.body.firstName, req.body.lastName, req.body.email, hashedPassword, req.body.gender]
+				}
+				currentClient.query(query2, (err, result)=> {
+					if (err) {
+						console.log(err);
+					} else {
+						//Sets a cookie with the users info
+						req.session.user = result.rows[0];
+						res.redirect('../newsfeed/'+result.rows[0].id);
+					}
+				});
+			}
 		}
 	});
 });
