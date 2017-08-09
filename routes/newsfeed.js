@@ -152,6 +152,7 @@ router.post('/:pid/comment', function(req, res, next) {
 //Check if user is logged in, otherwise redirect to login page
 function requireLogin (req, res, next) {
 	if (!req.user) {
+		//res.render('login.ejs', { error: 'Must be logged in to view this page' });
 		res.redirect('/');
 	} else {
 		next();
