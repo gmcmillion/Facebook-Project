@@ -17,7 +17,6 @@ router.post('/signIn', function(req, res, next) {
 		text: 'SELECT * FROM users WHERE email = $1',
 		values: [req.body.loginEmail]
 	}
-
 	//Query if user email and password exists
 	currentClient.query(query, (err, result)=> {
 		if (err) {
@@ -39,9 +38,6 @@ router.post('/signIn', function(req, res, next) {
 
 //Register user, and redirect to newsfeed
 router.post('/reg', function(req, res) {
-	//Hash password
-	var hashedPassword = passwordHash.generate(req.body.password);
-
 	//Query to prevent registering email twice
 	const query1 = {
 		text: 'SELECT * FROM users WHERE email = $1',
@@ -56,6 +52,8 @@ router.post('/reg', function(req, res) {
 				console.log('EMAIL EXISTS ALREADY');
 				res.redirect('/');
 			} else {
+				//Hash password
+				var hashedPassword = passwordHash.generate(req.body.password);
 				//Register new user
 				const query2 = {
 					text: 'INSERT INTO users(first_name, last_name, email, pass, gender) VALUES($1, $2, $3, $4, $5) RETURNING *',

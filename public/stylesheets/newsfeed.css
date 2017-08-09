@@ -19,6 +19,27 @@ button {
     margin: 10px;
 }
 
+#add-friends-form {
+    display: inline;
+    position: relative;
+    top: -7px;
+    left: 10px;
+}
+
+#add-friends-form input[type=text] {
+    height: 24px;
+    width: 250px;
+    border-radius: 2px;
+    border-style: none;
+    padding-left: 5px;
+    font-family: Helvetica, Arial, sans-serif;
+    font-size: 14px;
+}
+
+#add-friends-form input[type=submit] {
+    cursor: pointer;
+}
+
 #user-profile {
     float: right;
     margin: 10px;

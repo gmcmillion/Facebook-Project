@@ -3,11 +3,6 @@ var router = express.Router();
 var client = require('../postgres.js');
 var currentClient = client.getClient();
 
-// GET newsfeed page (DELETE SOON, UNNECESSARY)
-router.get('/', function(req, res, next) {
-	res.render('newsfeed');
-});
-
 // GET newsfeed page w/ id
 router.get('/:id', requireLogin, function(req, res, next) {
 	//Query for firstname, lastname

@@ -197,6 +197,15 @@ $(document).ready(function() {
         $('#myModal').toggle();         //display modal
     });
 
+    //Add friend button
+    $('#add-friend-btn').on('click', function(e) {
+        e.preventDefault();
+        
+        //Toggle add friend modal
+
+        
+    });
+
     //Adjust currrent post with new edits
     $('#modal-post-content').submit(function(e) {
         e.preventDefault();
