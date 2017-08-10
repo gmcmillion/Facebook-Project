@@ -118,7 +118,18 @@ router.delete('/:uid/deletePost/:pid', function(req, res) {
 		if (err) {
 			console.log(err);
 		} else {
-			res.json(result);
+			//Also DELETE any comments associated with this deleted post
+			const query = {
+				text: 'DELETE FROM comments WHERE postid = $1',
+				values: [req.params.pid]
+			}	
+			currentClient.query(query, (err, result)=> {
+				if (err) {
+					console.log(err);
+				} else {
+					res.json(result);
+				}
+			});
 		}
 	});
 });

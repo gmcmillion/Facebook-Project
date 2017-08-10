@@ -55,9 +55,10 @@ router.post('/reg', function(req, res) {
 				//Hash password
 				var hashedPassword = passwordHash.generate(req.body.password);
 				//Register new user
+				var defaultPic = "/images/default-profile-pic.jpg";
 				const query2 = {
 					text: 'INSERT INTO users(first_name, last_name, email, pass, gender, profilepic) VALUES($1, $2, $3, $4, $5, $6) RETURNING *',
-					values: [req.body.firstName, req.body.lastName, req.body.email, hashedPassword, req.body.gender, req.body.profilepic]
+					values: [req.body.firstName, req.body.lastName, req.body.email, hashedPassword, req.body.gender, defaultPic]
 				}
 				currentClient.query(query2, (err, result)=> {
 					if (err) {
