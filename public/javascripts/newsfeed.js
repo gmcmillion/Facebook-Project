@@ -198,12 +198,54 @@ $(document).ready(function() {
     });
 
     //Add friend button
+    var userid;
     $('#add-friend-btn').on('click', function(e) {
         e.preventDefault();
-        
-        //Toggle add friend modal
+        var email = $('#find-friend-input-box').val();
 
-        
+        //Ajax call to find friend
+        var post_url = email+"/findfriend";
+
+        $.ajax({
+            url: post_url,
+            type: "GET"
+        }).done(function(response) {
+            if(response.length > 0) {
+                userid = response[0].id;
+                //If user is found, populate modal with response, and add button
+                var p1 = $('<p/>').attr('id', 'user-found').text('USER FOUND'); 
+                var p2 = $('<p/>').attr('id', 'found-user-email').text(response[0].first_name +' '+ response[0].last_name); 
+                var addbtn = $('<button/>').attr('id', 'add-user-btn').attr('type', 'button').text('ADD USER');
+                $('.find-friend-modal-content').append(p1).append(p2).append(addbtn);
+            } else {
+                //Else populate modal with message that friend was not found
+                var p1 = $('<p/>').text('USER EMAIL NOT FOUND'); 
+                $('.find-friend-modal-content').append(p1);
+            }
+                            
+            //Toggle add friend modal
+            $('#find-friends-modal').toggle();
+        });
+    });
+
+    //Add user as friend
+    $('#find-friends-modal').on('click', '#add-user-btn', function(e) {
+        e.preventDefault();
+
+        //Ajax call to add friend to friends database
+        var post_url = userid+"/addfriend";
+        $.ajax({
+            url: post_url,
+            type: "POST",
+            dataType: 'json',
+            data: {
+                myid: id
+            }
+        }).done(function(response) {  
+            //Close modal 
+            $('#find-friends-modal').toggle();
+            $('.find-friend-modal-content').find('*').not('.find-friends-close-btn').remove();
+        });
     });
 
     //Adjust currrent post with new edits
@@ -235,9 +277,17 @@ $(document).ready(function() {
         $('#myModal').toggle(); 
     });
     
-    //When 'x' is clicked to close modal
-    $('.close').click(function() {
+    //When 'x' is clicked to close 'edit post' modal
+    $('.edit-post-close-btn').click(function() {
         $('#myModal').toggle();
+    });
+
+    //When 'x' is clicked to close 'find friends' modal
+    $('.find-friends-close-btn').click(function() {
+        $('#find-friends-modal').toggle();
+
+        //Reset modal
+        $('.find-friend-modal-content').find('*').not('.find-friends-close-btn').remove();
     });
 
     // Get the modal

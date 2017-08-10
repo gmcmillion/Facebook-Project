@@ -341,13 +341,13 @@ button {
     cursor: pointer;
 }
 
-.close {
+.edit-post-close-btn {
     color: #aaaaaa;
     float: right;
     font-size: 22px;
 }
 
-.close:hover {
+.edit-post-close-btn:hover {
     color: #000000;
     text-decoration: none;
     cursor: pointer;
@@ -430,3 +430,50 @@ button {
     font-size: 12px;
     margin-left: 44px;
 }
+
+/* Modal Content */
+.find-friend-modal-content {
+    font-family: 'Freight Sans Bold', Helvetica, Arial, sans-serif;
+    background-color: #fefefe;
+    margin: auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 50%;
+}
+
+.find-friends-close-btn {
+    color: #aaaaaa;
+    float: right;
+    font-size: 22px;
+}
+
+.find-friends-close-btn:hover {
+    color: #000000;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+#user-found {
+    font-size: 22px;
+    margin: 0;
+    margin-bottom: 20px;
+}
+
+#found-user-email {
+    display: inline;
+    color: #3B5998;
+    font-size: 22px;
+}
+
+#add-user-btn {
+    display: inline;
+    margin-left: 30px;
+    height: 26px;
+    font-size: 16px !important;
+    background-color: #4169ac;
+    color: #ffffff;
+    border-radius: 4px;
+    border-style: none;
+    cursor: pointer;
+}
+

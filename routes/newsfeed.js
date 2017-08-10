@@ -21,6 +21,23 @@ router.get('/:id', requireLogin, function(req, res, next) {
 	});
 });
 
+// GET user stored in database if they exist
+router.get('/:email/findfriend', function(req, res, next) {
+	//Query for user email
+	const query = {
+		text: 'SELECT * FROM users WHERE email = $1',
+		values: [req.params.email]
+	}	
+	//Run query
+	currentClient.query(query, (err, result)=> {
+		if (err) {
+			console.log(err);
+		} else {
+			res.json(result.rows);
+		}
+	});
+});
+
 // GET all posts stored in database
 router.get('/:id/posts', function(req, res, next) {
 	//If Table doesnt exist, create 'posts' table
@@ -85,7 +102,6 @@ router.patch('/:pid/editlike', function(req, res) {
 		if (err) {
 			console.log(err);
 		} else {
-			console.log('liked');
 			res.json(result);
 		}
 	});
@@ -136,6 +152,26 @@ router.post('/:pid/comment', function(req, res, next) {
 	const query = 'INSERT INTO comments(postid, author, comment) VALUES($1, $2, $3) RETURNING *'
 	const values = [req.params.pid, req.body.author, req.body.newComment];
 	currentClient.query(query, values, function (err, result) {
+		if (err) {
+			console.log(err);
+		} else {
+			res.json(result.rows[0]);
+		}
+	});
+});
+
+// POST to add a friend
+router.post('/:uid/addfriend', function(req, res, next) {
+	//Create friendship table if it doesnt exist
+	currentClient.query('CREATE TABLE IF NOT EXISTS friendships(firstfriendid VARCHAR(50), secondfriendid VARCHAR(50))');
+
+	//Query to add user id's to friendship table
+	const query = {
+		text: 'INSERT INTO friendships(firstfriendid, secondfriendid) VALUES($1, $2) RETURNING *', 
+		values: [req.body.myid, req.params.uid]
+	}	
+	//Run query
+	currentClient.query(query, (err, result)=> {
 		if (err) {
 			console.log(err);
 		} else {
