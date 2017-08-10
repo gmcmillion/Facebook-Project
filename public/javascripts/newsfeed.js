@@ -33,7 +33,6 @@
 var posts = [];
 var row;
 $(document).ready(function() {
-
     //Get all posts which belong to this user
     var post_url = id+"/posts";
     $.ajax({
@@ -53,7 +52,7 @@ $(document).ready(function() {
         for(var i = 0; i < posts.length; i++)
         {
             var divpost = $('<div/>').attr('class', 'post');
-            var imgprof = $('<img/>').attr('src', '/images/post-prof-pic.png');      //Alter for correct prof-pics
+            var imgprof = $('<img/>').attr('class', 'post-profile-pic').attr('src', posts[i].profilepic);      //Alter for correct prof-pics
             var divNameTime = $('<div/>').attr('class', 'div-name-time');
             var span = $('<span/>').text(posts[i].author);
             var timeago = jQuery.timeago(posts[i].timestamp);
@@ -101,7 +100,7 @@ $(document).ready(function() {
                         for(var j = 0; j < response.length; j++)
                         {
                             var div = $('<div/>').attr('class', 'comment-div');
-                            var img = $('<img/>').attr('src', '/images/post-prof-pic.png');
+                            var img = $('<img/>').attr('class', 'post-profile-pic').attr('src', response[j].profilepic);
                             var span = $('<span/>').attr('class', 'author').text(response[j].author);
                             var p = $('<p/>').attr('class', 'comment').text(response[j].comment);
                             div.append(img).append(span).append(p);
@@ -133,15 +132,15 @@ $(document).ready(function() {
         $.post(post_url, {
             author: author,
             content: post,
-            time: isoTime
+            time: isoTime,
+            profilepic, profilepic
         }).done(function(response) {  
             //Add post to local data structure
             var len = posts.length;
             posts[len] = response;
-
             //Generate html code for new post
             var divpost = $('<div/>').attr('class', 'post');
-            var imgprof = $('<img/>').attr('src', '/images/post-prof-pic.png');
+            var imgprof = $('<img/>').attr('class', 'post-profile-pic').attr('src', posts[len].profilepic);      //Alter for correct prof-pics
             var span = $('<span/>').text(posts[len].author);
             var timeago = jQuery.timeago(posts[len].timestamp);
             var time = $('<time/>').attr('class', 'timeago').text(timeago);
@@ -373,15 +372,12 @@ $(document).ready(function() {
         
         $.post(post_url, {
             author: author,
-            newComment: comment
+            newComment: comment, 
+            profilepic: profilepic
         }).done(function(response) {  
-            //Store locally
-            var commlength = comments.length;
-            comments[commlength] = response;
-
             //Post comment html under post
             var div = $('<div/>').attr('class', 'comment-div');
-            var img = $('<img/>').attr('src', '/images/post-prof-pic.png');
+            var img = $('<img/>').attr('class', 'post-profile-pic').attr('src', profilepic);
             var span = $('<span/>').attr('class', 'author').text(response.author);
             var p = $('<p/>').attr('class', 'comment').text(response.comment);
             div.append(img).append(span).append(p);

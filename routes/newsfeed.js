@@ -16,7 +16,7 @@ router.get('/:id', requireLogin, function(req, res, next) {
 			console.log(err);
 		} else {
 			var author = result.rows[0].first_name + ' ' + result.rows[0].last_name;
-			res.render('newsfeed', {id: req.params.id, author: author});
+			res.render('newsfeed', {id: req.params.id, author: author, profilepic: result.rows[0].profilepic});
 		}
 	});
 });
@@ -61,8 +61,8 @@ router.get('/:id/posts', function(req, res, next) {
 // POST to newsfeed
 router.post('/:id', function(req, res, next) {
 	//Insert data into table
-	var userQuery = 'INSERT INTO posts(author, content, timestamp) VALUES($1, $2, $3) RETURNING *'
-	var values = [req.body.author, req.body.content, req.body.time];
+	var userQuery = 'INSERT INTO posts(author, content, timestamp, profilepic) VALUES($1, $2, $3, $4) RETURNING *'
+	var values = [req.body.author, req.body.content, req.body.time, req.body.profilepic];
 	currentClient.query(userQuery, values, function (err, result) {
 		if (err) {
 			console.log(err);
@@ -148,8 +148,8 @@ router.post('/:pid/comment', function(req, res, next) {
 	//Create comment table if it doesnt exist
 	currentClient.query('CREATE TABLE IF NOT EXISTS comments(commentid SERIAL PRIMARY KEY, postid VARCHAR(50), author VARCHAR(100), profilepic VARCHAR(100), comment VARCHAR(200))');
 	//Insert data into table
-	const query = 'INSERT INTO comments(postid, author, comment) VALUES($1, $2, $3) RETURNING *'
-	const values = [req.params.pid, req.body.author, req.body.newComment];
+	const query = 'INSERT INTO comments(postid, author, comment, profilepic) VALUES($1, $2, $3, $4) RETURNING *'
+	const values = [req.params.pid, req.body.author, req.body.newComment, req.body.profilepic];
 	currentClient.query(query, values, function (err, result) {
 		if (err) {
 			console.log(err);

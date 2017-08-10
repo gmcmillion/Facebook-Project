@@ -58,6 +58,7 @@ button {
 
 #user-profile img {
     vertical-align:middle;
+    width:24px;
 }
 
 #user-profile span {
@@ -114,10 +115,19 @@ button {
 
 #post-body img {
     vertical-align:middle;
+
+}
+
+.post-profile-pic {
+    width: 40px;
 }
 
 #post-form {
     display: inline;
+}
+
+#create-a-post-profile-pic {
+    width: 40px;
 }
 
 #post-body input {

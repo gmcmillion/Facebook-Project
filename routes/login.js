@@ -56,8 +56,8 @@ router.post('/reg', function(req, res) {
 				var hashedPassword = passwordHash.generate(req.body.password);
 				//Register new user
 				const query2 = {
-					text: 'INSERT INTO users(first_name, last_name, email, pass, gender) VALUES($1, $2, $3, $4, $5) RETURNING *',
-					values: [req.body.firstName, req.body.lastName, req.body.email, hashedPassword, req.body.gender]
+					text: 'INSERT INTO users(first_name, last_name, email, pass, gender, profilepic) VALUES($1, $2, $3, $4, $5, $6) RETURNING *',
+					values: [req.body.firstName, req.body.lastName, req.body.email, hashedPassword, req.body.gender, req.body.profilepic]
 				}
 				currentClient.query(query2, (err, result)=> {
 					if (err) {

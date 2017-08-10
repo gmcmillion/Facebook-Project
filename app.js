@@ -65,9 +65,6 @@ app.use(function(req, res, next) {
 app.get('/logout', function(req, res) {
 	//Reset the session
 	req.session.reset();
-
-	//End client connection on logout
-	client.logout();
 	
 	//Redirect to homepage
 	res.redirect('/');
