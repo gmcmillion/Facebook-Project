@@ -41,7 +41,6 @@ router.get('/:email/findfriend', function(req, res, next) {
 // GET all posts stored in database
 router.get('/:id/posts', function(req, res, next) {
 	//If Table doesnt exist, create 'posts' table
-	//currentClient.query('CREATE TABLE IF NOT EXISTS posts(id SERIAL PRIMARY KEY, author VARCHAR(100), profilepic VARCHAR(100), content VARCHAR(50), timestamp VARCHAR(50), liked BOOLEAN DEFAULT FALSE, commentsid integer[])');
 	currentClient.query('CREATE TABLE IF NOT EXISTS posts(id SERIAL PRIMARY KEY, author VARCHAR(100), profilepic VARCHAR(100), content VARCHAR(50), timestamp VARCHAR(50), liked BOOLEAN DEFAULT FALSE)');
 
 	//Query to get all posts from current user

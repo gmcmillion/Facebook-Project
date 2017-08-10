@@ -31,7 +31,6 @@
 // ];
 
 var posts = [];
-var comments = [];
 var row;
 $(document).ready(function() {
 
@@ -89,26 +88,28 @@ $(document).ready(function() {
             divAllComments2.append(commentForm);
             divAllComments.append(divAllComments2);
 
-            /*
             //Ajax call for comments
             var post_url = posts[i].id+"/allcomments";
             $.ajax({
                 url: post_url,
-                type: 'GET'
-            }).done(function(response) {                
-                //Append Comments
-                for(var j = 0; j < response.length; j++)
-                {
-                    var div = $('<div/>').attr('class', 'comment-div');
-                    var img = $('<img/>').attr('src', '/images/post-prof-pic.png');
-                    var span = $('<span/>').attr('class', 'author').text(response[j].author);
-                    var p = $('<p/>').attr('class', 'comment').text(response[j].comment);
-                    div.append(img).append(span).append(p);
-                    divAllComments.append(div);
-                }    
-                
+                type: 'GET',
+                async: false,                   //TODO: find alternative for 'async: false' which is depricated
+                success: function(response) {
+                    if(response.length > 0)
+                    {                             
+                        //Append Comments
+                        for(var j = 0; j < response.length; j++)
+                        {
+                            var div = $('<div/>').attr('class', 'comment-div');
+                            var img = $('<img/>').attr('src', '/images/post-prof-pic.png');
+                            var span = $('<span/>').attr('class', 'author').text(response[j].author);
+                            var p = $('<p/>').attr('class', 'comment').text(response[j].comment);
+                            div.append(img).append(span).append(p);
+                            divAllComments.append(div);
+                        }    
+                    }
+                }
             }); 
-            */
             divpost.append(divAllComments);
             $('#all-posts').prepend(divpost);
         }
