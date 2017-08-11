@@ -77,7 +77,12 @@ $(document).ready(function() {
             var p3 = $('<p/>').text('Comment'); 
             btn3.append(imgcomment).append(p3);
             divlike.append(btn2).append(btn3);
-            divpost.append(imgprof).append(divNameTime).append(btn1).append(p1).append(divlike);
+            //Drop down arrow will only appear if you are the author
+            if(posts[i].author === author) {
+                divpost.append(imgprof).append(divNameTime).append(btn1).append(p1).append(divlike);
+            } else {
+                divpost.append(imgprof).append(divNameTime).append(p1).append(divlike);
+            }
             divAllComments = $('<div/>').attr('class', 'all-comments');
             divAllComments2 = $('<div/>').attr('class', 'comment-input-div');
             commentForm = $('<form/>').attr('class', 'comment-input-form');
