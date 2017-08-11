@@ -51,11 +51,6 @@ button {
     display: inline;
 }
 
-#user-profile a:hover {
-    background-color: #355285;
-    border-radius: 4px;
-}
-
 #user-profile img {
     vertical-align:middle;
     width:24px;
@@ -63,17 +58,24 @@ button {
 
 #user-profile span {
     font-family: Helvetica, Arial, sans-serif;
-    font-size: 14px;
     color: #ffffff;
     display: inline;
 }
 
-#home {
-    border-left: thin solid #355285;
+#profile-name-span {
+    font-size: 14px;
 }
 
-#logout {
+#options-drop-down-button {
+    border: none;
+    background: none;
     border-left: thin solid #355285;
+    cursor: pointer;
+}
+
+#equals {
+    font-size: 20px;
+    margin-left: 4px;
 }
 
 #newsfeed {
@@ -488,3 +490,32 @@ button {
     cursor: pointer;
 }
 
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.dropdown a:hover {
+    background-color: #f1f1f1;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    top: 35px;
+    left: -120px;
+    background-color: #f9f9f9;
+    min-width: 160px;
+    overflow: auto;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+}
+
+.dropdown-content a {
+    display: block !important; 
+    font-family: Helvetica, Arial, sans-serif;
+    font-size: 16px;
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+}

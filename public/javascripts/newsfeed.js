@@ -389,4 +389,11 @@ $(document).ready(function() {
             $('#all-posts div:nth-child('+(row+1)+') .all-comments').append(div);
         });
     });
+
+    //Navbar dropdown menu
+    $('#options-drop-down-button').on('click', function() {
+        console.log('clicked');
+
+        $('#myDropdown').toggle();
+    });
 });

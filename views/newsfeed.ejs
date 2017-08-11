@@ -15,14 +15,18 @@
             <div id="user-profile">
                 <a href="/profile-page">
                     <img src=<%- profilepic %>>
-                    <span><%- author %></span>
+                    <span id="profile-name"><%- author %></span>
                 </a>
-                <a href="" id="home">
-                    <span >Home</span>
-                </a>
-                <a href="/logout" id="logout">
-                    <span >Log out</span>
-                </a>
+                <div class="dropdown">  
+                    <button id="options-drop-down-button">
+                        <span id="equals">&equiv;</span>
+                    </button>
+                    <div id="myDropdown" class="dropdown-content">
+                        <a href="#about">Delete Account</a>
+                        <a href="#contact">Change Password</a>
+                        <a href="/logout">Logout</a>
+                    </div>
+                </div>
             </div>
         </div>
         <div id="newsfeed">
