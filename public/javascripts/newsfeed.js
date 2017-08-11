@@ -1,35 +1,3 @@
-//Dummy posts (oldest -> newest)
-// var posts = [
-//     {
-//     author: 'Gregg Mcmillion',
-//     profilePic: '',
-//     postContent: 'Hello World!!',
-//     timeStamp: '2006-07-17T09:24:17Z',
-//     liked: false,
-//     comments: [
-//         { author: "Gregg Mcmillion", newComment: "This is my 1st comment"},
-//         { author: "Gregg Mcmillion", newComment: "This is my 2nd comment"}
-//     ]},
-//     {
-//     author: 'Marlyn Cuenca',
-//     profilePic: '',
-//     postContent: 'Goodbye World!!',
-//     timeStamp: '2007-07-17T09:24:17Z',
-//     liked: true,
-//     comments: [
-//         { author: "Gregg Mcmillion", newComment: "This is my 3rd comment"},
-//         { author: "Gregg Mcmillion", newComment: "This is my 4th comment"}
-//     ]},
-//     {
-//     author: 'Molly',
-//     profilePic: '',
-//     postContent: 'Another Post',
-//     timeStamp: '2017-07-17T09:24:17Z',
-//     liked: true,
-//     comments: [
-//     ]}
-// ];
-
 var posts = [];
 var row;
 $(document).ready(function() {
@@ -188,10 +156,9 @@ $(document).ready(function() {
 
     //Receive list back from server on client side
     socket.on('new post', function(post) {
-        //var len = posts.length;     //Get column
-        //posts[len] = post;          //Store in local data structure
+        var len = posts.length;     //Get column
+        posts[len] = post;          //Store in local data structure
 
-        /*
         //Generate html code for new post
         var divpost = $('<div/>').attr('class', 'post');
         var imgprof = $('<img/>').attr('class', 'post-profile-pic').attr('src', posts[len].profilepic);      //Alter for correct prof-pics
@@ -214,7 +181,12 @@ $(document).ready(function() {
         var p3 = $('<p/>').text('Comment'); 
         btn3.append(imgcomment).append(p3);
         divlike.append(btn2).append(btn3);
-        divpost.append(imgprof).append(divNameTime).append(btn1).append(p1).append(divlike);
+        //Drop down arrow will only appear if you are the author
+        if(posts[len].author === author) {
+            divpost.append(imgprof).append(divNameTime).append(btn1).append(p1).append(divlike);
+        } else {
+            divpost.append(imgprof).append(divNameTime).append(p1).append(divlike);
+        }
         divAllComments = $('<div/>').attr('class', 'all-comments');
         divAllComments2 = $('<div/>').attr('class', 'comment-input-div');
         commentForm = $('<form/>').attr('class', 'comment-input-form');
@@ -225,7 +197,6 @@ $(document).ready(function() {
         divAllComments.append(divAllComments2);
         divpost.append(divAllComments);
         $('#all-posts').prepend(divpost);
-        */
     });
 
     //Dropdown menu for down arrow
@@ -325,10 +296,22 @@ $(document).ready(function() {
 
             //Store edit in local database
             posts[calc].postContent = edits;
+
+            //Socket emit
+            socket.emit('edit post', edits, calc, row);
         });
 
         //Close modal
         $('#myModal').toggle(); 
+    });
+
+    //Recieve edits from server
+    socket.on('edited post', function(edits, calc, row) {
+        //Store edit in html code
+        $('#all-posts div:nth-child('+(row+1)+')').find('.post-content').html(edits);
+
+        //Store edit in local database
+        posts[calc].postContent = edits;
     });
     
     //When 'x' is clicked to close 'edit post' modal
@@ -352,6 +335,7 @@ $(document).ready(function() {
             $('#myModal').toggle();
         }
     }
+
     //Delete post
     $("#delete-post").click(function() {
         $("#post-dropdown").toggle();
@@ -370,7 +354,19 @@ $(document).ready(function() {
 
             //Delete post from html       
             $('#all-posts .post:nth-child('+(row+1)+')').remove();
+
+            //Send to server
+            socket.emit('delete post', calc, row);
         });
+    });
+
+    //Receive back from server on client side and delete post
+    socket.on('updated post', function(calc, row) {
+        //Delete post from html
+        $('#all-posts .post:nth-child('+(row+1)+')').remove();
+        
+        //Delete post from local data structure
+        posts.splice(calc, 1);
     });
 
     //Like or Unlike a post
@@ -401,9 +397,23 @@ $(document).ready(function() {
                 like: posts[calc].liked
             }
         }).done(function(response) {
-
+            //Socket emit
+            socket.emit('liked post', posts[calc].liked, calc, row);
         });
     }); 
+
+    //Recieve like updates from server
+    socket.on('update likes', function(data, calc, row) {
+        //Update within local data structure & html
+        posts[calc].liked = data;  
+        if (posts[calc].liked === true) {
+            $('#all-posts div:nth-child('+(row+1)+') .like-btn').find('p').attr('class', 'liked');                   //Change the text color
+            $('#all-posts div:nth-child('+(row+1)+') .like-btn').find('img').attr('src', '/images/blue-like.png');   //Change the img  
+        } else {
+            $('#all-posts div:nth-child('+(row+1)+') .like-btn').find('p').attr('class', 'unliked');                 //Change the text color
+            $('#all-posts div:nth-child('+(row+1)+') .like-btn').find('img').attr('src', '/images/like.png');        //Change the img  
+        }
+    });
 
     //Toggle comment input box to comment on a post
     $('#all-posts').on('click', '.comment-btn', function() { 
@@ -431,12 +441,26 @@ $(document).ready(function() {
         }).done(function(response) {  
             //Post comment html under post
             var div = $('<div/>').attr('class', 'comment-div');
-            var img = $('<img/>').attr('class', 'post-profile-pic').attr('src', profilepic);
+            var img = $('<img/>').attr('class', 'post-profile-pic').attr('src', response.profilepic);
             var span = $('<span/>').attr('class', 'author').text(response.author);
             var p = $('<p/>').attr('class', 'comment').text(response.comment);
             div.append(img).append(span).append(p);
             $('#all-posts div:nth-child('+(row+1)+') .all-comments').append(div);
+
+            //Socket emit
+            socket.emit('comment', response, calc, row);
         });
+    });
+
+    //Recieve comment updates from server
+    socket.on('update comment', function(response, calc, row) {
+        //Update html
+        var div = $('<div/>').attr('class', 'comment-div');
+        var img = $('<img/>').attr('class', 'post-profile-pic').attr('src', response.profilepic);
+        var span = $('<span/>').attr('class', 'author').text(response.author);
+        var p = $('<p/>').attr('class', 'comment').text(response.comment);
+        div.append(img).append(span).append(p);
+        $('#all-posts div:nth-child('+(row+1)+') .all-comments').append(div);  
     });
 
     //Navbar dropdown menu
