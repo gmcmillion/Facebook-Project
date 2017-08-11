@@ -33,6 +33,9 @@
 var posts = [];
 var row;
 $(document).ready(function() {
+    var socket = io.connect();
+    socket.emit('newsfeed id', id);
+
     //Get all posts which belong to this user
     var post_url = id+"/posts";
     $.ajax({
@@ -143,6 +146,7 @@ $(document).ready(function() {
             //Add post to local data structure
             var len = posts.length;
             posts[len] = response;
+
             //Generate html code for new post
             var divpost = $('<div/>').attr('class', 'post');
             var imgprof = $('<img/>').attr('class', 'post-profile-pic').attr('src', posts[len].profilepic);      //Alter for correct prof-pics
@@ -176,8 +180,53 @@ $(document).ready(function() {
             divAllComments.append(divAllComments2);
             divpost.append(divAllComments);
             $('#all-posts').prepend(divpost);
+
+            //Send to server
+            socket.emit('send post', response, id);
         });
     }
+
+    //Receive list back from server on client side
+    socket.on('new post', function(post) {
+        //var len = posts.length;     //Get column
+        //posts[len] = post;          //Store in local data structure
+
+        /*
+        //Generate html code for new post
+        var divpost = $('<div/>').attr('class', 'post');
+        var imgprof = $('<img/>').attr('class', 'post-profile-pic').attr('src', posts[len].profilepic);      //Alter for correct prof-pics
+        var span = $('<span/>').text(posts[len].author);
+        var timeago = jQuery.timeago(posts[len].timestamp);
+        var time = $('<time/>').attr('class', 'timeago').text(timeago);
+        var divNameTime = $('<div/>').attr('class', 'div-name-time');
+        divNameTime.append(span).append(time);
+        var btn1 = $('<button/>').attr('class', 'down-arrow');
+        var imgarrow = $('<img/>').attr('src', '/images/down-arrow.png');
+        btn1.append(imgarrow);
+        var p1 = $('<p/>').attr('class', 'post-content').text(posts[len].content);
+        var divlike = $('<div/>').attr('class', 'like-comment');
+        var btn2 = $('<button/>').attr('class', 'like-btn');
+        var imglike = $('<img/>').attr('src', '/images/like.png');   
+        var p2 = $('<p/>').text('Like'); 
+        btn2.append(imglike).append(p2);
+        var btn3 = $('<button/>').attr('class', 'comment-btn')
+        var imgcomment = $('<img/>').attr('src', '/images/comment.png');   
+        var p3 = $('<p/>').text('Comment'); 
+        btn3.append(imgcomment).append(p3);
+        divlike.append(btn2).append(btn3);
+        divpost.append(imgprof).append(divNameTime).append(btn1).append(p1).append(divlike);
+        divAllComments = $('<div/>').attr('class', 'all-comments');
+        divAllComments2 = $('<div/>').attr('class', 'comment-input-div');
+        commentForm = $('<form/>').attr('class', 'comment-input-form');
+        input1 = $('<input/>').attr('class', 'new-comment').attr('type', 'text').attr('placeholder', 'Write a comment...');
+        input2 = $('<input/>').attr('type', 'submit').attr('class', 'comment-submit-button');
+        commentForm.append(input1).append(input2);
+        divAllComments2.append(commentForm);
+        divAllComments.append(divAllComments2);
+        divpost.append(divAllComments);
+        $('#all-posts').prepend(divpost);
+        */
+    });
 
     //Dropdown menu for down arrow
     $('#all-posts').on('click', '.down-arrow', function() {
@@ -392,8 +441,6 @@ $(document).ready(function() {
 
     //Navbar dropdown menu
     $('#options-drop-down-button').on('click', function() {
-        console.log('clicked');
-
         $('#myDropdown').toggle();
     });
 });
