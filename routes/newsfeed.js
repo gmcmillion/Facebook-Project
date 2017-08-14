@@ -21,6 +21,16 @@ router.get('/:id', requireLogin, function(req, res, next) {
 	});
 });
 
+//Render to delete user account
+router.get('/:id/deleteuser', function(req, res, next) {
+	res.render('deleteuser');
+});
+
+//To delete account on yes
+router.post('./yes', function(req, res, next) {
+	console.log("YES!!");
+});
+
 // GET user stored in database if they exist
 router.get('/:email/findfriend', function(req, res, next) {
 	//Query for user email
@@ -41,7 +51,7 @@ router.get('/:email/findfriend', function(req, res, next) {
 // GET all posts stored in database
 router.get('/:id/posts', function(req, res, next) {
 	//If Table doesnt exist, create 'posts' table
-	currentClient.query('CREATE TABLE IF NOT EXISTS posts(id SERIAL PRIMARY KEY, author VARCHAR(100), profilepic VARCHAR(100), content VARCHAR(50), timestamp VARCHAR(50), liked BOOLEAN DEFAULT FALSE)');
+	currentClient.query('CREATE TABLE IF NOT EXISTS posts(id SERIAL PRIMARY KEY, author VARCHAR(100), authorid VARCHAR(100), profilepic VARCHAR(100), content VARCHAR(50), timestamp VARCHAR(50), liked BOOLEAN DEFAULT FALSE)');
 
 	//Query to get all posts from current user
 	//TODO: get posts only from this user, and implement a relation
@@ -61,8 +71,8 @@ router.get('/:id/posts', function(req, res, next) {
 // POST to newsfeed
 router.post('/:id', function(req, res, next) {
 	//Insert data into table
-	var userQuery = 'INSERT INTO posts(author, content, timestamp, profilepic) VALUES($1, $2, $3, $4) RETURNING *'
-	var values = [req.body.author, req.body.content, req.body.time, req.body.profilepic];
+	var userQuery = 'INSERT INTO posts(author, authorid, content, timestamp, profilepic) VALUES($1, $2, $3, $4, $5) RETURNING *'
+	var values = [req.body.author, req.params.id, req.body.content, req.body.time, req.body.profilepic];
 	currentClient.query(userQuery, values, function (err, result) {
 		if (err) {
 			console.log(err);

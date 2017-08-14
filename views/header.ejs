@@ -1,0 +1,31 @@
+<html>
+    <head>
+        <title>News Feed</title>
+        <link rel="stylesheet" type="text/css" href=<%=href%>>
+    </head>
+    <body>
+        <div id="nav-bar">
+            <div id="fb-logo">
+                <img src="/images/f-letter.png">
+                <form id="add-friends-form">
+                    <input type="text" placeholder="Search for friends by email..." id="find-friend-input-box"></input>
+                    <input type="submit" value="Find" id="add-friend-btn"></input>
+                </form>
+            </div>
+            <div id="user-profile">
+                <a href="/profile-page">
+                    <img src=<%- profilepic %>>
+                    <span id="navbar-profile-name"><%- author %></span>
+                </a>
+                <div class="dropdown">  
+                    <button id="options-drop-down-button">
+                        <span id="equals">&equiv;</span>
+                    </button>
+                    <div id="myDropdown" class="dropdown-content">
+                        <a href="<%- id %>/deleteuser">Delete Account</a>
+                        <a href="#contact">Change Password</a>
+                        <a href="/logout">Logout</a>
+                    </div>
+                </div>
+            </div>
+        </div>

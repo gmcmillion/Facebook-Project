@@ -3,7 +3,7 @@ body {
 }
 
 button {
-    outline: 0;
+    outline: none;
 }
 
 #nav-bar {
@@ -62,10 +62,6 @@ button {
     display: inline;
 }
 
-#profile-name-span {
-    font-size: 14px;
-}
-
 #options-drop-down-button {
     border: none;
     background: none;
@@ -117,7 +113,6 @@ button {
 
 #post-body img {
     vertical-align:middle;
-
 }
 
 .post-profile-pic {
@@ -322,6 +317,7 @@ button {
     font-size:16px;
 
 }
+
 #modal-post-content {
     clear:both;
     position: relative;

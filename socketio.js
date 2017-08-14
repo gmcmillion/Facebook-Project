@@ -8,7 +8,6 @@ module.exports = {
 		instance  = require('socket.io')(server);
 
 		instance.on('connection', function(socket){
-            console.log('a user connected to sockets');   
             socket
             .on('newsfeed id', function(id) {
                 socket.join(id);        //Join room
@@ -29,7 +28,6 @@ module.exports = {
                 socket.broadcast.emit('update comment', data, calc, row);
             })
             .on('disconnect', function(){
-                console.log('user disconnected');
             });
         });
 	}

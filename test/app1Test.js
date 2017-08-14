@@ -3,6 +3,7 @@ const assert = require('chai').assert;
 //const addNumbers = require('../app1').addNumbers;
 const app1 = require('../app1');
 
+/*
 //Results
 sayHelloResult = app1.sayHello();
 addNumbersResult = app1.addNumbers(5, 5);
@@ -33,3 +34,4 @@ describe('App1', function() {
         });
     });
 });
+*/
