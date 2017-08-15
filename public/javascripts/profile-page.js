@@ -14,7 +14,7 @@ $(document).ready(function() {
         populate(posts);
     }); 
     
-    function populate(posts) {
+    async function populate(posts) {
         //Populate newsfeed with posts
         for(var i = 0; i < posts.length; i++)
         {
@@ -56,10 +56,9 @@ $(document).ready(function() {
 
             //Ajax call for comments
             var post_url = "profile-page/"+posts[i].id+"/allcomments";
-            $.ajax({
+            await $.ajax({
                 url: post_url,
                 type: 'GET',
-                async: false,                   //TODO: find alternative for 'async: false' which is depricated
                 success: function(response) {
                     if(response.length > 0)
                     {                             

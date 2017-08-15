@@ -3,8 +3,6 @@ var chaiHttp = require('chai-http');
 var server = require('../app');
 var should = chai.should(); 
 chai.use(chaiHttp);
-var client = require('../postgres.js');
-var currentClient = client.getClient();
 
 //Test Login page routes
 describe('Login', function() {

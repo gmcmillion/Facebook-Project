@@ -71,7 +71,7 @@ router.post('/reg', function(req, res) {
 					} else {
 						//Sets a cookie with the users info
 						req.session.user = result.rows[0];
-						res.redirect('../newsfeed/'+result.rows[0].id);
+						res.redirect('/newsfeed/'+result.rows[0].id);
 					}
 				});
 			}
