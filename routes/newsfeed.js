@@ -23,7 +23,10 @@ router.get('/:id', requireLogin, function(req, res, next) {
 
 //Render to delete user account
 router.get('/:id/deleteuser', function(req, res, next) {
-	res.render('deleteuser');
+	//res.render('deleteuser');
+	var author = res.locals.user.first_name + ' ' + res.locals.user.last_name;	
+	res.render('deleteuser', {id: res.locals.user.id, author: author, profilepic: res.locals.user.profilepic});
+	
 });
 
 //To delete account on yes

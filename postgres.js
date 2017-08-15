@@ -2,10 +2,9 @@ var pg = require('pg');
 
 //Get environment if testing
 var environment = process.env.NODE_ENV;
-
 var connectionString = 'postgres://localhost:5432/facebook';
 if(environment === 'test') {
-    connectionString = 'postgres://localhost:5432/facebook-test';
+    connectionString = 'postgres://localhost:5432/facebooktest';        //Testing database
 }
 
 var currentClient = new function() {

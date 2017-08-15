@@ -11,7 +11,7 @@ $(document).ready(function() {
             gender = data.results[0].gender;
             firstname = data.results[0].name.first;
             lastname = data.results[0].name.last;
-            profilepic = data.results[0].picture.thumbnail;
+            profilepic = data.results[0].picture.large;
             console.log(email+" "+password+" "+gender+" "+firstname+" "+lastname+" "+profilepic);
             //Register random user
             $.ajax({

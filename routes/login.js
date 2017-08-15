@@ -22,15 +22,20 @@ router.post('/signIn', function(req, res, next) {
 		if (err) {
 			console.log(err);
 		} else {
-			//Verify hashed password matches
-			if(passwordHash.verify(req.body.loginPassword, result.rows[0].pass))
-			{
-				//Sets a cookie with the users info
-				req.session.user = result.rows[0];
-				res.redirect('../newsfeed/'+result.rows[0].id);
-			} else {
-				console.log('PASSWORD DOES NOT MATCH');
+			if(result.rows.length === 0) {
+				console.log('USER DOESNT EXIST');
 				res.redirect('/');
+			} else {
+				//Verify hashed password matches
+				if(passwordHash.verify(req.body.loginPassword, result.rows[0].pass))
+				{
+					//Sets a cookie with the users info
+					req.session.user = result.rows[0];
+					res.redirect('/newsfeed/'+result.rows[0].id);
+				} else {
+					console.log('PASSWORD DOES NOT MATCH');
+					res.redirect('/');
+				}
 			}
 		}
 	});
