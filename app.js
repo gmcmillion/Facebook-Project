@@ -10,6 +10,7 @@ var sessions = require('client-sessions');
 var login = require('./routes/login');
 var newsfeed = require('./routes/newsfeed');
 var profilePage = require('./routes/profile-page');
+var deleteuser = require('./routes/deleteuser');
 
 //Postgres
 var client = require('./postgres.js');
@@ -82,6 +83,7 @@ app.use('/', login);
 app.use('/login', login);
 app.use('/newsfeed', newsfeed);
 app.use('/profile-page', profilePage);
+app.use('/deleteuser', deleteuser);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

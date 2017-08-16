@@ -64,8 +64,9 @@ button {
 }
 
 #delete-body input {
-    width: 100px;
-    font-size: 24px;
+    width: 300px;
+    height: 40px;
+    font-size: 22px;
     border-radius: 4px;
     border-style: none;
     box-shadow: 0 1px #cccccc;
@@ -77,4 +78,90 @@ button {
 
 #no {
     margin-left: 20px;
+}
+
+#add-friends-form {
+    display: inline;
+    position: relative;
+    top: -7px;
+    left: 10px;
+}
+
+#add-friends-form input[type=text] {
+    height: 24px;
+    width: 250px;
+    border-radius: 2px;
+    border-style: none;
+    padding-left: 5px;
+    font-family: Helvetica, Arial, sans-serif;
+    font-size: 14px;
+}
+
+#add-friends-form input[type=submit] {
+    cursor: pointer;
+}
+
+
+#user-profile {
+    float: right;
+    margin: 10px;
+}
+
+#user-profile a {
+    text-decoration: none;
+    padding:6px;
+    display: inline;
+}
+
+#user-profile img {
+    vertical-align:middle;
+    width:24px;
+}
+
+#user-profile span {
+    font-family: Helvetica, Arial, sans-serif;
+    color: #ffffff;
+    display: inline;
+}
+
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.dropdown a:hover {
+    background-color: #f1f1f1;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    top: 35px;
+    left: -120px;
+    background-color: #f9f9f9;
+    min-width: 160px;
+    overflow: auto;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+}
+
+.dropdown-content a {
+    display: block !important; 
+    font-family: Helvetica, Arial, sans-serif;
+    font-size: 16px;
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+}
+
+#options-drop-down-button {
+    border: none;
+    background: none;
+    border-left: thin solid #355285;
+    cursor: pointer;
+}
+
+#equals {
+    font-size: 20px;
+    margin-left: 4px;
 }

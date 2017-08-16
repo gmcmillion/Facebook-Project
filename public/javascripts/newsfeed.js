@@ -422,7 +422,7 @@ $(document).ready(function() {
         $('#all-posts div:nth-child('+(row+1)+')').find('.comment-input-div').toggle();
     });
 
-    //Get new comment on submit
+    //Post new comment on submit
     $('#all-posts').on('submit', '.comment-input-form', function(e) {
         e.preventDefault();
         $(this).parent().toggle();  //Close input box
@@ -431,10 +431,12 @@ $(document).ready(function() {
         var calc = posts.length - row - 1;
 
         //Add comment to database
+        console.log('ID: '+ id);
         var post_url = posts[calc].id+'/comment';
         
         $.post(post_url, {
             author: author,
+            authorid: id,
             newComment: comment, 
             profilepic: profilepic
         }).done(function(response) {  

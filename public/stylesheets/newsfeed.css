@@ -310,6 +310,11 @@ button {
     float: left;
 }
 
+#modal-left img {
+    padding-left: 5px;
+    width: 40px;
+}
+
 #modal-author {
     position: relative;
     top: -10px;
