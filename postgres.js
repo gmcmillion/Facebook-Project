@@ -25,6 +25,12 @@ var currentClient = new function() {
     this.getClient = function() {
         return client;
     }
+
+    //Wipe database for testing
+    this.truncate = function() {
+        client.query('TRUNCATE users, posts, comments');
+    }
+
     //Logout
     this.logout = function() {
         client.end();

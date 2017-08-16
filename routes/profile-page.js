@@ -49,7 +49,7 @@ router.get('/:pid/allcomments', function(req, res, next) {
 	});
 });
 
-// POST to newsfeed
+// POST to profile page
 router.post('/:id', function(req, res, next) {
 	//Insert data into table
 	var userQuery = 'INSERT INTO posts(author, authorid, content, timestamp, profilepic) VALUES($1, $2, $3, $4, $5) RETURNING *'

@@ -1,10 +1,11 @@
+var client = require('../postgres.js');
 var chai = require('chai');
 var chaiHttp = require('chai-http');
 var server = require('../app');
 var should = chai.should(); 
 chai.use(chaiHttp);
 var agent = chai.request.agent(server);     //Needed for client-sessions
-var path;
+var path, postid, userid;
 
 //Test Login page routes
 describe('Login Page', function() {
@@ -64,11 +65,12 @@ describe('Newsfeed Page', function() {
             done();     //End test case
         });
     });
-    var postid;
+   
     it('Should POST a new post and store it in database', function(done) {
         agent.post(path)
         .send({author: 'Marlyn Cuenca', content: 'Hey There!!'})
         .end(function(err, res){
+            userid = res.body.authorid;
             postid = res.body.id;   //Store postid for PATCH next
             res.body.should.be.a('object');
             res.body.should.have.property('id');
@@ -169,14 +171,106 @@ describe('Profile Page', function() {
             done();     //End test case
         });
     });
+
+    it('Should POST a new post and store it in database', function(done) {
+        agent.post('/profile-page/'+userid)
+        .send({author: 'Marlyn Cuenca', content: 'My 2nd post'})
+        .end(function(err, res){
+            postid = res.body.id;   //Store postid for PATCH next
+            res.body.should.be.a('object');
+            res.body.should.have.property('id');
+            res.body.should.have.property('author').eql('Marlyn Cuenca');
+            res.body.should.have.property('authorid');
+            res.body.should.have.property('profilepic');
+            res.body.should.have.property('content').eql('My 2nd post');
+            res.body.should.have.property('timestamp');
+            res.body.should.have.property('liked').eql(false);
+            res.should.have.status(200);
+            done();     //End test case
+        });
+    });
+
+    it('Should POST a new comment on the post just made', function(done) {
+        agent.post('/profile-page/'+postid+'/comment')
+        .send({author: 'Marlyn Cuenca', newComment: '2nd comment'})
+        .end(function(err, res){
+            res.should.have.status(200);
+            res.body.should.be.a('object');
+            res.body.should.have.property('commentid');
+            res.body.should.have.property('postid');
+            res.body.should.have.property('author').eql('Marlyn Cuenca');
+            res.body.should.have.property('profilepic');
+            res.body.should.have.property('comment').eql('2nd comment');
+            done();     //End test case
+        });
+    });
+
+    it('Should PATCH the post just made', function(done) {
+        agent.patch('/profile-page/'+postid+'/editpost')
+        .send({edit: 'Goodbye 2nd post'})
+        .end(function(err, res){
+            res.should.have.status(200);
+            res.body.should.be.a('object');
+            res.body.should.have.property('command').eql('UPDATE');
+            res.body.should.have.property('rowCount').eql(1);
+            done();     //End test case
+        });
+    });
+    
+    it('Should PATCH the post just made and LIKE it', function(done) {
+        agent.patch('/profile-page/'+postid+'/editlike')
+        .send({like: true})
+        .end(function(err, res){
+            res.should.have.status(200);
+            res.body.should.be.a('object');
+            res.body.should.have.property('command').eql('UPDATE');
+            res.body.should.have.property('rowCount').eql(1);
+            done();     //End test case
+        });
+    });
+    
+    it('Should GET all the posts stored in database', function(done) {
+        agent.get('/profile-page/'+userid+'/posts')
+        .end(function(err, res){
+            res.should.have.status(200);
+            res.body.should.be.a('array');
+            res.body.length.should.be.greaterThan(0);
+            res.body[0].should.have.property('author').eql('Marlyn Cuenca');
+            res.body[0].should.have.property('content').eql('Goodbye 2nd post');
+            done();     //End test case
+        });
+    });
+    
+    it('Should GET all the comments for a specific post', function(done) {
+        agent.get('/profile-page/'+postid+'/allcomments')
+        .end(function(err, res){
+            res.should.have.status(200);
+            res.body.should.be.a('array');
+            res.body.length.should.be.greaterThan(0);
+            res.body[0].should.have.property('commentid');
+            res.body[0].should.have.property('postid');
+            res.body[0].should.have.property('author').eql('Marlyn Cuenca');
+            res.body[0].should.have.property('profilepic');
+            res.body[0].should.have.property('comment').eql('2nd comment');
+            done();     //End test case
+        });
+    });
+
+    it('Should DELETE a specific post', function(done) {
+        agent.delete('/profile-page/'+userid+'/deletePost/'+postid)
+        .end(function(err, res){
+            res.should.have.status(200);
+            res.body.should.be.a('object');
+            res.body.should.have.property('command').eql('DELETE');
+            done();     //End test case
+        });
+    });
 });
-
-
-
 
 //Clear database after tests
-/*
 after(function(done) {  
-    console.log('TRUNCATE DB');
+    console.log('DELETING TEST DATABASE');
+    client.truncate();
+    done();     
 });
-*/
+
