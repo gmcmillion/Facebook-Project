@@ -75,7 +75,7 @@ describe('Newsfeed Page', function() {
             res.body.should.be.a('object');
             res.body.should.have.property('id');
             res.body.should.have.property('author').eql('Marlyn Cuenca');
-            res.body.should.have.property('authorid');
+            res.body.should.have.property('authorid').eql(userid);
             res.body.should.have.property('profilepic');
             res.body.should.have.property('content').eql('Hey There!!');
             res.body.should.have.property('timestamp');
@@ -110,14 +110,15 @@ describe('Newsfeed Page', function() {
     });
 
     it('Should POST a new comment on the post just made', function(done) {
-        agent.post(path+'/comment')
-        .send({author: 'Marlyn Cuenca', newComment: 'My comment'})
+        agent.post('/newsfeed/'+postid+'/comment')
+        .send({author: 'Marlyn Cuenca', newComment: 'My comment', authorid: userid})
         .end(function(err, res){
             res.should.have.status(200);
             res.body.should.be.a('object');
             res.body.should.have.property('commentid');
             res.body.should.have.property('postid');
             res.body.should.have.property('author').eql('Marlyn Cuenca');
+            res.body.should.have.property('authorid').eql(userid);
             res.body.should.have.property('profilepic');
             res.body.should.have.property('comment').eql('My comment');
             done();     //End test case
@@ -137,7 +138,7 @@ describe('Newsfeed Page', function() {
     });
 
     it('Should GET all the comments for a specific post', function(done) {
-        agent.get(path+'/allcomments')
+        agent.get('/newsfeed/'+postid+'/allcomments')
         .end(function(err, res){
             res.should.have.status(200);
             res.body.should.be.a('array');
@@ -145,6 +146,7 @@ describe('Newsfeed Page', function() {
             res.body[0].should.have.property('commentid');
             res.body[0].should.have.property('postid');
             res.body[0].should.have.property('author').eql('Marlyn Cuenca');
+            res.body[0].should.have.property('authorid').eql(userid);
             res.body[0].should.have.property('profilepic');
             res.body[0].should.have.property('comment').eql('My comment');
             done();     //End test case
@@ -176,11 +178,12 @@ describe('Profile Page', function() {
         agent.post('/profile-page/'+userid)
         .send({author: 'Marlyn Cuenca', content: 'My 2nd post'})
         .end(function(err, res){
+            userid = res.body.authorid;
             postid = res.body.id;   //Store postid for PATCH next
             res.body.should.be.a('object');
             res.body.should.have.property('id');
             res.body.should.have.property('author').eql('Marlyn Cuenca');
-            res.body.should.have.property('authorid');
+            res.body.should.have.property('authorid').eql(userid);
             res.body.should.have.property('profilepic');
             res.body.should.have.property('content').eql('My 2nd post');
             res.body.should.have.property('timestamp');
@@ -192,13 +195,14 @@ describe('Profile Page', function() {
 
     it('Should POST a new comment on the post just made', function(done) {
         agent.post('/profile-page/'+postid+'/comment')
-        .send({author: 'Marlyn Cuenca', newComment: '2nd comment'})
+        .send({author: 'Marlyn Cuenca', newComment: '2nd comment', authorid: userid})
         .end(function(err, res){
             res.should.have.status(200);
             res.body.should.be.a('object');
             res.body.should.have.property('commentid');
             res.body.should.have.property('postid');
             res.body.should.have.property('author').eql('Marlyn Cuenca');
+            res.body.should.have.property('authorid').eql(userid);
             res.body.should.have.property('profilepic');
             res.body.should.have.property('comment').eql('2nd comment');
             done();     //End test case
@@ -250,6 +254,7 @@ describe('Profile Page', function() {
             res.body[0].should.have.property('commentid');
             res.body[0].should.have.property('postid');
             res.body[0].should.have.property('author').eql('Marlyn Cuenca');
+            res.body[0].should.have.property('authorid').eql(userid);
             res.body[0].should.have.property('profilepic');
             res.body[0].should.have.property('comment').eql('2nd comment');
             done();     //End test case
@@ -267,10 +272,30 @@ describe('Profile Page', function() {
     });
 });
 
-//Clear database after tests
-after(function(done) {  
-    console.log('DELETING TEST DATABASE');
-    client.truncate();
-    done();     
+//Test Delete Users routes
+describe('Delete User page', function() {
+    it('Should render the delete user page on GET', function(done) {
+        agent.get('/deleteuser/'+userid)
+        .end(function(err, res){
+            res.should.have.status(200);
+            done();     //End test case
+        });
+    });
+
+    it('Should delete the user on DELETE', function(done) {
+        agent.delete('/deleteuser/delete/'+userid)
+        .end(function(err, res){
+            res.should.have.status(200);
+            res.body.should.be.a('object');
+            res.body.should.have.property('command').eql('DELETE');
+            done();     //End test case
+        });
+    });
 });
 
+//Clear database after tests
+// after(function(done) {  
+//     console.log('DELETING TEST DATABASE');
+//     client.truncate();
+//     done();     
+// });

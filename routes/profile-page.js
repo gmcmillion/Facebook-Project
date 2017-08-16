@@ -6,7 +6,7 @@ var currentClient = client.getClient();
 // GET login page
 router.get('/', requireLogin, function(req, res, next) {
 	var author = res.locals.user.first_name + ' ' + res.locals.user.last_name;
-	res.render('profile-page', {id: res.locals.user.id, author: author, profilepic: res.locals.user.profilepic});
+	res.render('profile-page', {id: res.locals.user.id, author: author, profilepic: res.locals.user.profilepic, title: 'Profile Page'});
 });
 
 // GET all posts stored in database
@@ -32,8 +32,8 @@ router.get('/:aid/posts', function(req, res, next) {
 // GET all comments for a specific post
 router.get('/:pid/allcomments', function(req, res, next) {
 	//If Table doesnt exist, create 'posts' table
-	currentClient.query('CREATE TABLE IF NOT EXISTS comments(commentid SERIAL PRIMARY KEY, postid VARCHAR(50), author VARCHAR(100), profilepic VARCHAR(100), comment VARCHAR(200))');
-
+	currentClient.query('CREATE TABLE IF NOT EXISTS comments(commentid SERIAL PRIMARY KEY, postid VARCHAR(50), author VARCHAR(100), authorid VARCHAR(100), profilepic VARCHAR(100), comment VARCHAR(200))');
+	
 	//Query to get all comments from current post
 	const query = {
 		text: 'SELECT * FROM comments WHERE postid = $1', 
@@ -128,10 +128,11 @@ router.delete('/:uid/deletePost/:pid', function(req, res) {
 // POST comments
 router.post('/:pid/comment', function(req, res, next) {
 	//Create comment table if it doesnt exist
-	currentClient.query('CREATE TABLE IF NOT EXISTS comments(commentid SERIAL PRIMARY KEY, postid VARCHAR(50), author VARCHAR(100), profilepic VARCHAR(100), comment VARCHAR(200))');
+	currentClient.query('CREATE TABLE IF NOT EXISTS comments(commentid SERIAL PRIMARY KEY, postid VARCHAR(50), author VARCHAR(100), authorid VARCHAR(100), profilepic VARCHAR(100), comment VARCHAR(200))');
+	
 	//Insert data into table
-	const query = 'INSERT INTO comments(postid, author, comment, profilepic) VALUES($1, $2, $3, $4) RETURNING *'
-	const values = [req.params.pid, req.body.author, req.body.newComment, req.body.profilepic];
+	const query = 'INSERT INTO comments(postid, author, authorid, comment, profilepic) VALUES($1, $2, $3, $4, $5) RETURNING *'
+	const values = [req.params.pid, req.body.author, req.body.authorid, req.body.newComment, req.body.profilepic];
 	currentClient.query(query, values, function (err, result) {
 		if (err) {
 			console.log(err);

@@ -16,7 +16,7 @@ router.get('/:id', requireLogin, function(req, res, next) {
 			console.log(err);
 		} else {
 			var author = result.rows[0].first_name + ' ' + result.rows[0].last_name;
-			res.render('newsfeed', {id: req.params.id, author: author, profilepic: result.rows[0].profilepic});
+			res.render('newsfeed', {id: result.rows[0].id, author: author, profilepic: result.rows[0].profilepic, title: 'Newsfeed'});
 		}
 	});
 });
@@ -137,7 +137,6 @@ router.delete('/:uid/deletePost/:pid', function(req, res) {
 // GET all comments for a specific post
 router.get('/:pid/allcomments', function(req, res, next) {
 	//If Table doesnt exist, create 'posts' table
-	//currentClient.query('CREATE TABLE IF NOT EXISTS comments(commentid SERIAL PRIMARY KEY, postid VARCHAR(50), author VARCHAR(100), profilepic VARCHAR(100), comment VARCHAR(200))');
 	currentClient.query('CREATE TABLE IF NOT EXISTS comments(commentid SERIAL PRIMARY KEY, postid VARCHAR(50), author VARCHAR(100), authorid VARCHAR(100), profilepic VARCHAR(100), comment VARCHAR(200))');
 	
 	//Query to get all comments from current post
@@ -157,9 +156,7 @@ router.get('/:pid/allcomments', function(req, res, next) {
 
 // POST comments
 router.post('/:pid/comment', function(req, res, next) {
-	console.log(req.body.authorid);
 	//Create comment table if it doesnt exist
-	//currentClient.query('CREATE TABLE IF NOT EXISTS comments(commentid SERIAL PRIMARY KEY, postid VARCHAR(50), author VARCHAR(100), profilepic VARCHAR(100), comment VARCHAR(200))');
 	currentClient.query('CREATE TABLE IF NOT EXISTS comments(commentid SERIAL PRIMARY KEY, postid VARCHAR(50), author VARCHAR(100), authorid VARCHAR(100), profilepic VARCHAR(100), comment VARCHAR(200))');
 
 	//Insert data into table

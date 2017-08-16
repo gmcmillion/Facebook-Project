@@ -6,7 +6,7 @@ var currentClient = client.getClient();
 //Render to delete user account
 router.get('/:id', requireLogin, function(req, res, next) {
 	var author = res.locals.user.first_name + ' ' + res.locals.user.last_name;	
-	res.render('deleteuser', {id: res.locals.user.id, author: author, profilepic: res.locals.user.profilepic});
+	res.render('deleteuser', {id: res.locals.user.id, author: author, profilepic: res.locals.user.profilepic, title: 'Delete User'});
 });
 
 //To delete account
