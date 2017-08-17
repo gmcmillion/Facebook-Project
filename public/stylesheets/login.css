@@ -123,3 +123,7 @@ body {
 #create-account-btn input:hover {
     background-color: #62a350;
 }
+
+#forgot-pass {
+    text-decoration: none;
+}
