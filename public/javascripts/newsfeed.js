@@ -77,8 +77,12 @@ $(document).ready(function() {
                             var div = $('<div/>').attr('class', 'comment-div');
                             var img = $('<img/>').attr('class', 'post-profile-pic').attr('src', response[j].profilepic);
                             var span = $('<span/>').attr('class', 'author').text(response[j].author);
+                            var timeago = jQuery.timeago(response[j].timestamp);
+                            var time = $('<time/>').attr('class', 'timeago').text(timeago);
+                            var divNameTime = $('<div/>').attr('class', 'div-name-time');
+                            divNameTime.append(time);
                             var p = $('<p/>').attr('class', 'comment').text(response[j].comment);
-                            div.append(img).append(span).append(p);
+                            div.append(img).append(span).append(p).append(divNameTime);
                             divAllComments.append(div);
                         }    
                     }
@@ -253,9 +257,7 @@ $(document).ready(function() {
     });
 
     //Add user as friend
-    $('#find-friends-modal').on('click', '#add-user-btn', function(e) {
-        e.preventDefault();
-
+    $('#find-friends-modal').on('click', '#add-user-btn', function() {
         //Ajax call to add friend to friends database
         var post_url = userid+"/addfriend";
         $.ajax({
@@ -269,6 +271,7 @@ $(document).ready(function() {
             //Close modal 
             $('#find-friends-modal').toggle();
             $('.find-friend-modal-content').find('*').not('.find-friends-close-btn').remove();
+            location.reload();      //Refresh page to get you friends posts on newsfeed
         });
     });
 
@@ -429,22 +432,30 @@ $(document).ready(function() {
         var comment = $(this).find('.new-comment').val();
         this.reset();
         var calc = posts.length - row - 1;
+        var time = new Date();
+        var isoTime = time.toISOString();
 
         //Add comment to database
         var post_url = posts[calc].id+'/comment';
-        
+
         $.post(post_url, {
             author: author,
             authorid: id,
             newComment: comment, 
-            profilepic: profilepic
+            profilepic: profilepic, 
+            timestamp: isoTime
         }).done(function(response) {  
+            console.log(response);
             //Post comment html under post
             var div = $('<div/>').attr('class', 'comment-div');
             var img = $('<img/>').attr('class', 'post-profile-pic').attr('src', response.profilepic);
             var span = $('<span/>').attr('class', 'author').text(response.author);
+            var timeago = jQuery.timeago(response.timestamp);
+            var time = $('<time/>').attr('class', 'timeago').text(timeago);
+            var divNameTime = $('<div/>').attr('class', 'div-name-time');
+            divNameTime.append(time);
             var p = $('<p/>').attr('class', 'comment').text(response.comment);
-            div.append(img).append(span).append(p);
+            div.append(img).append(span).append(p).append(divNameTime);
             $('#all-posts div:nth-child('+(row+1)+') .all-comments').append(div);
 
             //Socket emit

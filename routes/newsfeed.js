@@ -40,13 +40,10 @@ router.get('/:email/findfriend', function(req, res, next) {
 
 // GET all posts stored in database
 router.get('/:id/posts', function(req, res, next) {
-	//If Table doesnt exist, create 'posts' table
-	currentClient.query('CREATE TABLE IF NOT EXISTS posts(id SERIAL PRIMARY KEY, author VARCHAR(100), authorid VARCHAR(100), profilepic VARCHAR(100), content VARCHAR(50), timestamp VARCHAR(50), liked BOOLEAN DEFAULT FALSE)');
-
-	//Query to get all posts from current user
-	//TODO: get posts only from this user, and implement a relation
+	//Query to get all posts from current user & our friends posts
 	const query = {
-		text: 'SELECT * FROM posts ORDER BY id'
+		text: 'SELECT * FROM posts WHERE authorid = $1 OR authorid IN (SELECT secondfriendid FROM friendships WHERE firstfriendid = $1) ORDER BY timestamp',
+		values: [req.params.id]
 	}	
 	//Run query storing relevant info in newsfeed.ejs page
 	currentClient.query(query, (err, result)=> {
@@ -136,9 +133,6 @@ router.delete('/:uid/deletePost/:pid', function(req, res) {
 
 // GET all comments for a specific post
 router.get('/:pid/allcomments', function(req, res, next) {
-	//If Table doesnt exist, create 'posts' table
-	currentClient.query('CREATE TABLE IF NOT EXISTS comments(commentid SERIAL PRIMARY KEY, postid VARCHAR(50), author VARCHAR(100), authorid VARCHAR(100), profilepic VARCHAR(100), comment VARCHAR(200))');
-	
 	//Query to get all comments from current post
 	const query = {
 		text: 'SELECT * FROM comments WHERE postid = $1', 
@@ -156,12 +150,9 @@ router.get('/:pid/allcomments', function(req, res, next) {
 
 // POST comments
 router.post('/:pid/comment', function(req, res, next) {
-	//Create comment table if it doesnt exist
-	currentClient.query('CREATE TABLE IF NOT EXISTS comments(commentid SERIAL PRIMARY KEY, postid VARCHAR(50), author VARCHAR(100), authorid VARCHAR(100), profilepic VARCHAR(100), comment VARCHAR(200))');
-
 	//Insert data into table
-	const query = 'INSERT INTO comments(postid, author, authorid, comment, profilepic) VALUES($1, $2, $3, $4, $5) RETURNING *'
-	const values = [req.params.pid, req.body.author, req.body.authorid, req.body.newComment, req.body.profilepic];
+	const query = 'INSERT INTO comments(postid, author, authorid, comment, profilepic, timestamp) VALUES($1, $2, $3, $4, $5, $6) RETURNING *'
+	const values = [req.params.pid, req.body.author, req.body.authorid, req.body.newComment, req.body.profilepic, req.body.timestamp];
 	currentClient.query(query, values, function (err, result) {
 		if (err) {
 			console.log(err);
@@ -173,9 +164,6 @@ router.post('/:pid/comment', function(req, res, next) {
 
 // POST to add a friend
 router.post('/:uid/addfriend', function(req, res, next) {
-	//Create friendship table if it doesnt exist
-	currentClient.query('CREATE TABLE IF NOT EXISTS friendships(firstfriendid VARCHAR(50), secondfriendid VARCHAR(50))');
-
 	//Query to add user id's to friendship table
 	const query = {
 		text: 'INSERT INTO friendships(firstfriendid, secondfriendid) VALUES($1, $2) RETURNING *', 
@@ -194,7 +182,6 @@ router.post('/:uid/addfriend', function(req, res, next) {
 //Check if user is logged in, otherwise redirect to login page
 function requireLogin (req, res, next) {
 	if (!req.user) {
-		//res.render('login.ejs', { error: 'Must be logged in to view this page' });
 		res.redirect('/');
 	} else {
 		next();

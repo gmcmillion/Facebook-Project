@@ -323,10 +323,3 @@ describe('Delete User page', function() {
         });
     });
 });
-
-//Clear database after tests
-// after(function(done) {  
-//     console.log('DELETING TEST DATABASE');
-//     client.truncate();
-//     done();     
-// });

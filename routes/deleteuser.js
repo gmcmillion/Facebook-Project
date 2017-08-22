@@ -39,7 +39,18 @@ router.delete('/delete/:uid', function(req, res, next) {
                         if (err) {
                             console.log(err);
                         } else {
-                            res.json(result);
+							//Also delete any friendships
+							const query = {
+								text: 'DELETE FROM friendships WHERE firstfriendid = $1',
+								values: [req.params.uid]
+							}	
+							currentClient.query(query, (err, result)=> {
+								if (err) {
+									console.log(err);
+								} else {
+								   res.json(result);
+								}
+							});
                         }
                     });
                 }
