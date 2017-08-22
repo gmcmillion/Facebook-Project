@@ -417,9 +417,9 @@ $(document).ready(function() {
     //Toggle comment input box to comment on a post
     $('#all-posts').on('click', '.comment-btn', function() { 
         row = $(this).parent().parent().index();    
-                
+        
         //Toggle appropriate input box
-        $('#all-posts div:nth-child('+(row+1)+')').find('.comment-input-div').toggle();
+        $(this).parent().parent().find('.comment-input-div').toggle();
     });
 
     //Post new comment on submit

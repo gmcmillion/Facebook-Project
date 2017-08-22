@@ -272,6 +272,37 @@ describe('Profile Page', function() {
     });
 });
 
+//Test Reset password routes
+describe('Reset Password page', function() {
+    it('Should render the reset password page on GET', function(done) {
+        agent.get('/reset-password')
+        .end(function(err, res){
+            res.should.have.status(200);
+            done();     //End test case
+        });
+    });
+
+    it('Should find the user to reset their password on POST', function(done) {
+        agent.post('/reset-password/reset')
+        .send({email: 'marlyn@uci.edu'})
+        .end(function(err, res){
+            res.should.have.status(200);
+            done();     //End test case
+        });
+    });
+    /*
+    it('Should find the user to reset their password on POST', function(done) {
+        agent.post('/reset-password/reset')
+        .send({email: 'marlyn@uci.edu'})
+        .end(function(err, res){
+            res.should.have.status(200);
+            done();     //End test case
+        });
+    });
+    */
+
+});
+
 //Test Delete Users routes
 describe('Delete User page', function() {
     it('Should render the delete user page on GET', function(done) {

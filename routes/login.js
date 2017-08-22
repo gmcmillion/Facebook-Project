@@ -7,7 +7,6 @@ var passwordHash = require('password-hash');
 //GET login page
 router.get('/', function(req, res, next) {
 	res.render('login');
-	//res.render('login.ejs', { error: '' });
 });
 
 //Check if email and password exists, and redirect to newsfeed
