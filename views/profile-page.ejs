@@ -1,0 +1,52 @@
+<%- include('header', {href: '../stylesheets/profile-page.css' });%>
+<div id="profile-contents">
+    <div id="cover-photo">   
+        <div id="profile-pic-background">
+            <img src=<%- profilepic %>>
+        </div>
+        <div id="profile-name">
+            <p><%- author %></p>
+        </div>
+    </div>
+    <div id="profile-header">
+        <ul>
+            <li>Timeline</li>
+            <li>About</li>
+            <li>Friends</li>
+            <li>Photos</li>
+        </ul>
+    </div>
+    <div id="left-profile-content">
+        <div id="photos">
+            <img src="images/photos-logo.png">
+            <a href="">Photos</a>
+            <!-- Will be 9 images -->
+            <img src="images/pics.png" id="pics">
+        </div>
+        <div id="friends">
+            <img src="images/friends-logo.png">
+            <a href="">Friends</a>
+            <!-- Will be 9 images -->
+            <img src="images/friendzz.png" id="pics">
+        </div>
+    </div>
+    <div id="right-profile-content">
+        <div id="create-a-post">
+            <div id="post-header">
+                <img src="images/pencil.png">
+                <span>Create a Post</span>
+            </div>
+            <div id="post-body">
+                <img id="create-a-post-profile-pic" src=<%- profilepic %>>
+                <form id="post-form">
+                    <input type="text" id="post-input-box" placeholder="What's on your mind, <%- author %>?" autocomplete="off"></input>
+                    <input type="submit" value="Post" id="post-submit-btn"></input>
+                </form>                
+            </div>
+        </div>
+        <div id="all-posts">
+            <!-- ALL POSTS GO HERE -->
+        </div>
+    </div>
+</div>
+<%- include('footer', {script: "../javascripts/profile-page.js" }); %>

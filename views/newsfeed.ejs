@@ -1,0 +1,19 @@
+<%- include('header', {href: '../stylesheets/newsfeed.css' });%>
+<div id="newsfeed">
+    <div id="create-a-post">
+        <div id="post-header">
+            <img src="/images/pencil.png">
+            <span>Create a Post</span>
+        </div>
+        <div id="post-body">
+            <img id="create-a-post-profile-pic" src=<%- profilepic %>>
+            <form id="post-form">
+                <input type="text" id="post-input-box" placeholder="What's on your mind, <%- author %>?" autocomplete="off"></input>
+                <input type="submit" value="Post" id="post-submit-btn"></input>
+            </form>        
+        </div>
+    </div>
+    <div id="all-posts">
+    </div>
+</div>
+<%- include('footer', {script: "../javascripts/newsfeed.js" }); %>
