@@ -24,6 +24,7 @@ router.post('/reset', function(req, res) {
 				console.log('USER DOESNT EXIST');
 				res.redirect('/');
 			} else {
+                console.log('FOUND USER, RENDERING NEXT PAGE');
                 var hashedEmail = passwordHash.generate(result.rows[0].email);
                 //Redirect to next page
                 res.render('reset-password2.ejs', {id: result.rows[0].id, email: hashedEmail});
