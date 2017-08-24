@@ -6,6 +6,7 @@ var should = chai.should();
 chai.use(chaiHttp);
 var agent = chai.request.agent(server);     //Needed for client-sessions
 var path, postid, userid;
+var io = require('../socketio');
 
 //Test Login page routes
 describe('Login Page', function() {
@@ -70,6 +71,7 @@ describe('Newsfeed Page', function() {
         agent.post(path)
         .send({author: 'Marlyn Cuenca', content: 'Hey There!!'})
         .end(function(err, res){
+            console.log(res);
             userid = res.body.authorid;
             postid = res.body.id;   //Store postid for PATCH next
             res.body.should.be.a('object');
@@ -85,85 +87,85 @@ describe('Newsfeed Page', function() {
         });
     });
 
-    it('Should PATCH the post just made', function(done) {
-        agent.patch('/newsfeed/'+postid+'/editpost')
-        .send({edit: 'Goodbye'})
-        .end(function(err, res){
-            res.should.have.status(200);
-            res.body.should.be.a('object');
-            res.body.should.have.property('command').eql('UPDATE');
-            res.body.should.have.property('rowCount').eql(1);
-            done();     //End test case
-        });
-    });
+    // it('Should PATCH the post just made', function(done) {
+    //     agent.patch('/newsfeed/'+postid+'/editpost')
+    //     .send({edit: 'Goodbye'})
+    //     .end(function(err, res){
+    //         res.should.have.status(200);
+    //         res.body.should.be.a('object');
+    //         res.body.should.have.property('command').eql('UPDATE');
+    //         res.body.should.have.property('rowCount').eql(1);
+    //         done();     //End test case
+    //     });
+    // });
 
-    it('Should PATCH the post just made and LIKE it', function(done) {
-        agent.patch('/newsfeed/'+postid+'/editlike')
-        .send({like: true})
-        .end(function(err, res){
-            res.should.have.status(200);
-            res.body.should.be.a('object');
-            res.body.should.have.property('command').eql('UPDATE');
-            res.body.should.have.property('rowCount').eql(1);
-            done();     //End test case
-        });
-    });
+    // it('Should PATCH the post just made and LIKE it', function(done) {
+    //     agent.patch('/newsfeed/'+postid+'/editlike')
+    //     .send({like: true})
+    //     .end(function(err, res){
+    //         res.should.have.status(200);
+    //         res.body.should.be.a('object');
+    //         res.body.should.have.property('command').eql('UPDATE');
+    //         res.body.should.have.property('rowCount').eql(1);
+    //         done();     //End test case
+    //     });
+    // });
 
-    it('Should POST a new comment on the post just made', function(done) {
-        agent.post('/newsfeed/'+postid+'/comment')
-        .send({author: 'Marlyn Cuenca', newComment: 'My comment', authorid: userid})
-        .end(function(err, res){
-            res.should.have.status(200);
-            res.body.should.be.a('object');
-            res.body.should.have.property('commentid');
-            res.body.should.have.property('postid');
-            res.body.should.have.property('author').eql('Marlyn Cuenca');
-            res.body.should.have.property('authorid').eql(userid);
-            res.body.should.have.property('profilepic');
-            res.body.should.have.property('comment').eql('My comment');
-            done();     //End test case
-        });
-    });
+    // it('Should POST a new comment on the post just made', function(done) {
+    //     agent.post('/newsfeed/'+postid+'/comment')
+    //     .send({author: 'Marlyn Cuenca', newComment: 'My comment', authorid: userid})
+    //     .end(function(err, res){
+    //         res.should.have.status(200);
+    //         res.body.should.be.a('object');
+    //         res.body.should.have.property('commentid');
+    //         res.body.should.have.property('postid');
+    //         res.body.should.have.property('author').eql('Marlyn Cuenca');
+    //         res.body.should.have.property('authorid').eql(userid);
+    //         res.body.should.have.property('profilepic');
+    //         res.body.should.have.property('comment').eql('My comment');
+    //         done();     //End test case
+    //     });
+    // });
 
-    it('Should GET all the posts stored in database', function(done) {
-        agent.get(path+'/posts')
-        .end(function(err, res){
-            res.should.have.status(200);
-            res.body.should.be.a('array');
-            res.body.length.should.be.greaterThan(0);
-            res.body[0].should.have.property('author').eql('Marlyn Cuenca');
-            res.body[0].should.have.property('content').eql('Goodbye');
-            done();     //End test case
-        });
-    });
+    // it('Should GET all the posts stored in database', function(done) {
+    //     agent.get(path+'/posts')
+    //     .end(function(err, res){
+    //         res.should.have.status(200);
+    //         res.body.should.be.a('array');
+    //         res.body.length.should.be.greaterThan(0);
+    //         res.body[0].should.have.property('author').eql('Marlyn Cuenca');
+    //         res.body[0].should.have.property('content').eql('Goodbye');
+    //         done();     //End test case
+    //     });
+    // });
 
-    it('Should GET all the comments for a specific post', function(done) {
-        agent.get('/newsfeed/'+postid+'/allcomments')
-        .end(function(err, res){
-            res.should.have.status(200);
-            res.body.should.be.a('array');
-            res.body.length.should.be.greaterThan(0);
-            res.body[0].should.have.property('commentid');
-            res.body[0].should.have.property('postid');
-            res.body[0].should.have.property('author').eql('Marlyn Cuenca');
-            res.body[0].should.have.property('authorid').eql(userid);
-            res.body[0].should.have.property('profilepic');
-            res.body[0].should.have.property('comment').eql('My comment');
-            done();     //End test case
-        });
-    });
+    // it('Should GET all the comments for a specific post', function(done) {
+    //     agent.get('/newsfeed/'+postid+'/allcomments')
+    //     .end(function(err, res){
+    //         res.should.have.status(200);
+    //         res.body.should.be.a('array');
+    //         res.body.length.should.be.greaterThan(0);
+    //         res.body[0].should.have.property('commentid');
+    //         res.body[0].should.have.property('postid');
+    //         res.body[0].should.have.property('author').eql('Marlyn Cuenca');
+    //         res.body[0].should.have.property('authorid').eql(userid);
+    //         res.body[0].should.have.property('profilepic');
+    //         res.body[0].should.have.property('comment').eql('My comment');
+    //         done();     //End test case
+    //     });
+    // });
 
-    it('Should DELETE a specific post', function(done) {
-        agent.delete(path+'/deletePost/'+postid)
-        .end(function(err, res){
-            res.should.have.status(200);
-            res.body.should.be.a('object');
-            res.body.should.have.property('command').eql('DELETE');
-            done();     //End test case
-        });
-    });
+    // it('Should DELETE a specific post', function(done) {
+    //     agent.delete(path+'/deletePost/'+postid)
+    //     .end(function(err, res){
+    //         res.should.have.status(200);
+    //         res.body.should.be.a('object');
+    //         res.body.should.have.property('command').eql('DELETE');
+    //         done();     //End test case
+    //     });
+    // });
 });
-
+/*
 //Test Profile page routes
 describe('Profile Page', function() {
     it('Should render the profile page on GET', function(done) {
@@ -271,6 +273,7 @@ describe('Profile Page', function() {
         });
     });
 });
+*/
 
 //Test Reset password routes
 describe('Reset Password page', function() {
@@ -300,9 +303,9 @@ describe('Reset Password page', function() {
         });
     });
     */
-
 });
 
+/*
 //Test Delete Users routes
 describe('Delete User page', function() {
     it('Should render the delete user page on GET', function(done) {
@@ -323,3 +326,4 @@ describe('Delete User page', function() {
         });
     });
 });
+*/

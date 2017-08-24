@@ -65,6 +65,7 @@ router.post('/:id', function(req, res, next) {
 		if (err) {
 			console.log(err);
 		} else {
+			//io.getInstance()in(req.params.id).emit('new post', result.rows[0]);
 			io.getInstance().emit('new post', result.rows[0]);
 			res.json(result.rows[0]);
 		}
