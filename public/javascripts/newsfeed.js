@@ -1,8 +1,18 @@
 var posts = [];
+var friends = [];
 var row;
 $(document).ready(function() {
     var socket = io.connect();
     socket.emit('newsfeed id', id);
+
+    //Get friends, and store them locally
+    var post_url = id+"/friends";
+    $.ajax({
+        url: post_url,
+        type: 'GET'
+    }).done(function(response) {
+        friends = response;
+    }); 
 
     //Get all posts which belong to this user
     var post_url = id+"/posts";
@@ -114,46 +124,7 @@ $(document).ready(function() {
             time: isoTime,
             profilepic, profilepic
         }).done(function(response) {  
-            //Add post to local data structure
-            var len = posts.length;
-            posts[len] = response;
 
-            //Generate html code for new post
-            var divpost = $('<div/>').attr('class', 'post');
-            var imgprof = $('<img/>').attr('class', 'post-profile-pic').attr('src', posts[len].profilepic);
-            var span = $('<span/>').text(posts[len].author);
-            var timeago = jQuery.timeago(posts[len].timestamp);
-            var time = $('<time/>').attr('class', 'timeago').text(timeago);
-            var divNameTime = $('<div/>').attr('class', 'div-name-time');
-            divNameTime.append(span).append(time);
-            var btn1 = $('<button/>').attr('class', 'down-arrow');
-            var imgarrow = $('<img/>').attr('src', '/images/down-arrow.png');
-            btn1.append(imgarrow);
-            var p1 = $('<p/>').attr('class', 'post-content').text(posts[len].content);
-            var divlike = $('<div/>').attr('class', 'like-comment');
-            var btn2 = $('<button/>').attr('class', 'like-btn');
-            var imglike = $('<img/>').attr('src', '/images/like.png');   
-            var p2 = $('<p/>').text('Like'); 
-            btn2.append(imglike).append(p2);
-            var btn3 = $('<button/>').attr('class', 'comment-btn')
-            var imgcomment = $('<img/>').attr('src', '/images/comment.png');   
-            var p3 = $('<p/>').text('Comment'); 
-            btn3.append(imgcomment).append(p3);
-            divlike.append(btn2).append(btn3);
-            divpost.append(imgprof).append(divNameTime).append(btn1).append(p1).append(divlike);
-            divAllComments = $('<div/>').attr('class', 'all-comments');
-            divAllComments2 = $('<div/>').attr('class', 'comment-input-div');
-            commentForm = $('<form/>').attr('class', 'comment-input-form');
-            input1 = $('<input/>').attr('class', 'new-comment').attr('type', 'text').attr('placeholder', 'Write a comment...');
-            input2 = $('<input/>').attr('type', 'submit').attr('class', 'comment-submit-button');
-            commentForm.append(input1).append(input2);
-            divAllComments2.append(commentForm);
-            divAllComments.append(divAllComments2);
-            divpost.append(divAllComments);
-            $('#all-posts').prepend(divpost);
-
-            //Send to server
-            socket.emit('send post', response, id);
         });
     }
 
@@ -293,14 +264,7 @@ $(document).ready(function() {
                 edit: edits
             }
         }).done(function(response) {
-            //Store edit in html code
-            $('#all-posts div:nth-child('+(row+1)+')').find('.post-content').html(edits);
 
-            //Store edit in local database
-            posts[calc].postContent = edits;
-
-            //Socket emit
-            socket.emit('edit post', edits, calc, row);
         });
 
         //Close modal
@@ -308,9 +272,19 @@ $(document).ready(function() {
     });
 
     //Recieve edits from server
-    socket.on('edited post', function(edits, calc, row) {
+    socket.on('edited post', function(postid, edits) {
+        //Find the index of the post to delete  
+        var index;
+        for (var i = 0; i < posts.length; i++) {
+            if (postid == posts[i].id) {
+                index = i;
+                break;
+            }
+        }
+        var calc = posts.length - index - 1;
+        
         //Store edit in html code
-        $('#all-posts div:nth-child('+(row+1)+')').find('.post-content').html(edits);
+        $('#all-posts div:nth-child('+(calc+1)+')').find('.post-content').html(edits);
 
         //Store edit in local database
         posts[calc].postContent = edits;
@@ -351,21 +325,24 @@ $(document).ready(function() {
             url: post_url,
             type: "DELETE"
         }).done(function(response) { 
-            //Delete from local data structure
-            posts.splice(calc, 1);
 
-            //Delete post from html       
-            $('#all-posts .post:nth-child('+(row+1)+')').remove();
-
-            //Send to server
-            socket.emit('delete post', calc, row);
         });
     });
 
     //Receive back from server on client side and delete post
-    socket.on('updated post', function(calc, row) {
+    socket.on('deleted post', function(postid) {
+        //Find the index of the post to delete  
+        var index;
+        for (var i = 0; i < posts.length; i++) {
+            if (postid == posts[i].id) {
+                index = i;
+                break;
+            }
+        }
+        var calc = posts.length - index - 1;
+
         //Delete post from html
-        $('#all-posts .post:nth-child('+(row+1)+')').remove();
+        $('#all-posts .post:nth-child('+(calc+1)+')').remove();
         
         //Delete post from local data structure
         posts.splice(calc, 1);
@@ -373,18 +350,15 @@ $(document).ready(function() {
 
     //Like or Unlike a post
     $('#all-posts').on('click', '.like-btn', function() { 
-        //Update within local data structure
         row = $(this).parent().parent().index();
         var calc = posts.length - row - 1;
 
+        //Get like status to send to db
+        var likeStatus;
         if (posts[calc].liked === false) {
-            posts[calc].liked = true;                                   //Update local data
-            $(this).find('p').attr('class', 'liked');                   //Change the text color
-            $(this).find('img').attr('src', '/images/blue-like.png');   //Change the img  
+            likeStatus = true;
         } else {
-            posts[calc].liked = false;                                  //Update data
-            $(this).find('p').attr('class', 'unliked');                 //Change the text color
-            $(this).find('img').attr('src', '/images/like.png');        //Change the img  
+            likeStatus = false;
         }
 
         //Generate post url
@@ -396,24 +370,33 @@ $(document).ready(function() {
             type: "PATCH",
             dataType: 'json',
             data: {
-                like: posts[calc].liked
+                like: likeStatus
             }
         }).done(function(response) {
-            //Socket emit
-            socket.emit('liked post', posts[calc].liked, calc, row);
+
         });
     }); 
 
     //Recieve like updates from server
-    socket.on('update likes', function(data, calc, row) {
-        //Update within local data structure & html
-        posts[calc].liked = data;  
-        if (posts[calc].liked === true) {
-            $('#all-posts div:nth-child('+(row+1)+') .like-btn').find('p').attr('class', 'liked');                   //Change the text color
-            $('#all-posts div:nth-child('+(row+1)+') .like-btn').find('img').attr('src', '/images/blue-like.png');   //Change the img  
+    socket.on('update likes', function(postid, likeStatus) {
+        var index;
+        for (var i = 0; i < posts.length; i++) {
+            if (postid == posts[i].id) {
+                index = i;
+                break;
+            }
+        }
+        var calc = posts.length - index - 1;
+
+        //Update local data and alter html
+        if (posts[index].liked == false) {
+            posts[index].liked = true;      //Update local data
+            $('#all-posts div:nth-child('+(calc+1)+') .like-btn').find('p').attr('class', 'liked');                   //Change the text color
+            $('#all-posts div:nth-child('+(calc+1)+') .like-btn').find('img').attr('src', '/images/blue-like.png');   //Change the img  
         } else {
-            $('#all-posts div:nth-child('+(row+1)+') .like-btn').find('p').attr('class', 'unliked');                 //Change the text color
-            $('#all-posts div:nth-child('+(row+1)+') .like-btn').find('img').attr('src', '/images/like.png');        //Change the img  
+            posts[index].liked = false;     //Update local data
+            $('#all-posts div:nth-child('+(calc+1)+') .like-btn').find('p').attr('class', 'unliked');                 //Change the text color
+            $('#all-posts div:nth-child('+(calc+1)+') .like-btn').find('img').attr('src', '/images/like.png');        //Change the img  
         }
     });
 
@@ -445,33 +428,32 @@ $(document).ready(function() {
             profilepic: profilepic, 
             timestamp: isoTime
         }).done(function(response) {  
-            console.log(response);
-            //Post comment html under post
-            var div = $('<div/>').attr('class', 'comment-div');
-            var img = $('<img/>').attr('class', 'post-profile-pic').attr('src', response.profilepic);
-            var span = $('<span/>').attr('class', 'author').text(response.author);
-            var timeago = jQuery.timeago(response.timestamp);
-            var time = $('<time/>').attr('class', 'timeago').text(timeago);
-            var divNameTime = $('<div/>').attr('class', 'div-name-time');
-            divNameTime.append(time);
-            var p = $('<p/>').attr('class', 'comment').text(response.comment);
-            div.append(img).append(span).append(p).append(divNameTime);
-            $('#all-posts div:nth-child('+(row+1)+') .all-comments').append(div);
 
-            //Socket emit
-            socket.emit('comment', response, calc, row);
         });
     });
 
     //Recieve comment updates from server
-    socket.on('update comment', function(response, calc, row) {
+    socket.on('update comment', function(commentData) {
+        var index;
+        for (var i = 0; i < posts.length; i++) {
+            if (commentData.postid == posts[i].id) {
+                index = i;
+                break;
+            }
+        }
+        var calc = posts.length - index - 1;
+
         //Update html
         var div = $('<div/>').attr('class', 'comment-div');
-        var img = $('<img/>').attr('class', 'post-profile-pic').attr('src', response.profilepic);
-        var span = $('<span/>').attr('class', 'author').text(response.author);
-        var p = $('<p/>').attr('class', 'comment').text(response.comment);
-        div.append(img).append(span).append(p);
-        $('#all-posts div:nth-child('+(row+1)+') .all-comments').append(div);  
+        var img = $('<img/>').attr('class', 'post-profile-pic').attr('src', commentData.profilepic);
+        var span = $('<span/>').attr('class', 'author').text(commentData.author);
+        var timeago = jQuery.timeago(commentData.timestamp);
+        var time = $('<time/>').attr('class', 'timeago').text(timeago);
+        var divNameTime = $('<div/>').attr('class', 'div-name-time');
+        divNameTime.append(time);
+        var p = $('<p/>').attr('class', 'comment').text(commentData.comment);
+        div.append(img).append(span).append(p).append(divNameTime);
+        $('#all-posts div:nth-child('+(calc+1)+') .all-comments').append(div);  
     });
 
     //Navbar dropdown menu

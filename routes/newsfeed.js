@@ -2,6 +2,7 @@ var express = require('express');
 var router = express.Router();
 var client = require('../postgres.js');
 var currentClient = client.getClient();
+var io = require('../socketio');
 
 // GET newsfeed page w/ id
 router.get('/:id', requireLogin, function(req, res, next) {
@@ -64,6 +65,7 @@ router.post('/:id', function(req, res, next) {
 		if (err) {
 			console.log(err);
 		} else {
+			io.getInstance().emit('new post', result.rows[0]);
 			res.json(result.rows[0]);
 		}
 	});
@@ -81,6 +83,7 @@ router.patch('/:pid/editpost', function(req, res) {
 		if (err) {
 			console.log(err);
 		} else {
+			io.getInstance().emit('edited post', req.params.pid, req.body.edit);
 			res.json(result);
 		}
 	});
@@ -98,6 +101,7 @@ router.patch('/:pid/editlike', function(req, res) {
 		if (err) {
 			console.log(err);
 		} else {
+			io.getInstance().emit('update likes', req.params.pid, req.body.like);
 			res.json(result);
 		}
 	});
@@ -124,6 +128,7 @@ router.delete('/:uid/deletePost/:pid', function(req, res) {
 				if (err) {
 					console.log(err);
 				} else {
+					io.getInstance().emit('deleted post', req.params.pid);
 					res.json(result);
 				}
 			});
@@ -157,6 +162,7 @@ router.post('/:pid/comment', function(req, res, next) {
 		if (err) {
 			console.log(err);
 		} else {
+			io.getInstance().emit('update comment', result.rows[0]);
 			res.json(result.rows[0]);
 		}
 	});
@@ -175,6 +181,23 @@ router.post('/:uid/addfriend', function(req, res, next) {
 			console.log(err);
 		} else {
 			res.json(result.rows[0]);
+		}
+	});
+});
+
+// GET all users friends
+router.get('/:uid/friends', function(req, res, next) {
+	//Query to get all friends
+	const query = {
+		text: 'SELECT secondfriendid FROM friendships WHERE firstfriendid = $1', 
+		values: [req.params.uid]
+	}	
+	//Run query storing relevant info in newsfeed.ejs page
+	currentClient.query(query, (err, result)=> {
+		if (err) {
+			console.log(err);
+		} else {
+			res.json(result.rows);
 		}
 	});
 });
