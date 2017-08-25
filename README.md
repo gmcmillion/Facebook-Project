@@ -7,7 +7,7 @@ To Run:
 5. For the first database, type 'CREATE DATABASE facebook;'
 6. For the second test database, type 'CREATE DATABASE facebooktest;'
 7. Now create your username and password by typing in 'CREATE USER postgres WITH PASSWORD 'pgpass';'
-8. Now grant this user priveliges to both databases by typing 'GRANT ALL PRIVILEGES ON DATABASE facebook to postgres;' and 'GRANT ALL PRIVILEGES ON DATABASE facebooktest to postgres;'
+8. Now grant this user privileges to both databases by typing 'GRANT ALL PRIVILEGES ON DATABASE facebook to postgres;' and 'GRANT ALL PRIVILEGES ON DATABASE facebooktest to postgres;'
 9. Once the first database 'facebook' has been created, you should now be able to launch the website from within Terminal by either typing, within the projects directory, 'npm start' or 'nodemon' (if nodemon is installed). Then within your web browser, navigate to localhost:3000 and you should see the home page.  
 10. Once the second database 'facebooktest' has been created, navigate to the projects directory in Terminal and type 'npm run test' to begin mocha testing
 
